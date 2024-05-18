@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace _Scripts.GameCore.AttackSys
 {
@@ -20,5 +21,10 @@ namespace _Scripts.GameCore.AttackSys
         }
 
         public abstract void Attack();
+
+        private void OnDisable()
+        {
+            RemoveFromSystem();
+        }
     }
 }

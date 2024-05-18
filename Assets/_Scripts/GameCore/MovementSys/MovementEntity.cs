@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace _Scripts.GameCore.MovementSys
 {
@@ -19,6 +20,11 @@ namespace _Scripts.GameCore.MovementSys
         public void UpdateComponent()
         {
             Move();
+        }
+
+        private void OnDisable()
+        {
+            RemoveFromSystem();
         }
     }
 }

@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using _Scripts.GameCore.HealthSys;
-using UnityEngine;
-using UnityEngine.Serialization;
+﻿using UnityEngine;
 
 namespace _Scripts.GameCore
 {
     public class GameManager : MonoBehaviour
     {
-        public List<GameSystem> Systems = new(4);
+        public GameSystem[] Systems;
 
         private void Awake()
         {
-            for (int i = 0; i < Systems.Count; i++)
+            Systems = GetComponents<GameSystem>();
+            for (int i = 0; i < Systems.Length; i++)
             {
                 Systems[i].InitSystem();
             }
@@ -20,7 +17,7 @@ namespace _Scripts.GameCore
 
         private void Update()
         {
-            for (int i = 0; i < Systems.Count; i++)
+            for (int i = 0; i < Systems.Length; i++)
             {
                 Systems[i].UpdateSystem();
             }

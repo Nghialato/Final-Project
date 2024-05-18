@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace _Scripts.GameCore.HealthSys
 {
@@ -22,6 +23,11 @@ namespace _Scripts.GameCore.HealthSys
         public virtual void HealthUpdate()
         {
             
+        }
+
+        private void OnDisable()
+        {
+            RemoveFromSystem();
         }
     }
 }
