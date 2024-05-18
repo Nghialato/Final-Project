@@ -3,9 +3,12 @@ using UnityEngine;
 
 namespace _Scripts.GameCore.Entity
 {
-    public abstract class BaseEntity : MonoBehaviour
+    /// <summary>
+    /// Hold the Data of Entity
+    /// </summary>
+    public abstract class BaseEntityManager : MonoBehaviour
     {
-        private void OnEnable()
+        protected virtual void OnEnable()
         {
             var component = GetComponents<IComponentSystem>();
             for (int i = 0; i < component.Length; i++)

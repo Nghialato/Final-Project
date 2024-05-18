@@ -5,6 +5,7 @@ namespace _Scripts.GameCore.HealthSys
 {
     public abstract class HealthEntity : MonoBehaviour, IHealth
     {
+        public HealthData healthData;
         public void RegisterToSystem()
         {
             HealthSystemManagerEts.RegisterToArray(this);
@@ -17,7 +18,9 @@ namespace _Scripts.GameCore.HealthSys
 
         public void UpdateComponent()
         {
+            if (healthData.dirty == false) return;
             HealthUpdate();
+            healthData.dirty = false;
         }
 
         public virtual void HealthUpdate()

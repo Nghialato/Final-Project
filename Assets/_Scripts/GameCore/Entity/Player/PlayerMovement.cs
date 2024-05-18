@@ -1,5 +1,4 @@
-﻿using _Scripts.GameCore.HealthSys;
-using _Scripts.GameCore.MovementSys;
+﻿using _Scripts.GameCore.MovementSys;
 using UnityEngine;
 
 namespace _Scripts.GameCore.Entity
@@ -8,7 +7,7 @@ namespace _Scripts.GameCore.Entity
     {
         public override void Move()
         {
-            Debug.Log("Player Move");
+            _transform.position = positionData.position;
         }
     }
 }

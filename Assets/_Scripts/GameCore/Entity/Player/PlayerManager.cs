@@ -1,10 +1,9 @@
-﻿using System;
-using _Scripts.GameCore.HealthSys;
-using UnityEngine;
+﻿using _Scripts.GameCore.Entity.Enemy;
 
 namespace _Scripts.GameCore.Entity
 {
-    public class PlayerManager : BaseEntity
+    public class PlayerManager : BaseEntityManager, IPlayer
     {
+        
     }
 }

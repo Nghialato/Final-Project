@@ -1,4 +1,6 @@
-﻿namespace _Scripts.GameCore
+﻿using _Scripts.GameCore.Entity;
+
+namespace _Scripts.GameCore
 {
     public interface IComponentSystem
     {

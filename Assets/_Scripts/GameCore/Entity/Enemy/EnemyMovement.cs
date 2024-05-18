@@ -7,7 +7,7 @@ namespace _Scripts.GameCore.Entity.Enemy
     {
         public override void Move()
         {
-            Debug.Log("Enemy Move");
+            _transform.position = positionData.position;
         }
     }
 }
