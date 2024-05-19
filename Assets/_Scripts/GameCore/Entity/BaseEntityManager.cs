@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets._Scripts.GameCore.Entity;
+using System;
 using UnityEngine;
 
 namespace _Scripts.GameCore.Entity
@@ -8,6 +9,7 @@ namespace _Scripts.GameCore.Entity
     /// </summary>
     public abstract class BaseEntityManager : MonoBehaviour
     {
+        public EntityState state;
         protected virtual void OnEnable()
         {
             var component = GetComponents<IComponentSystem>();
@@ -41,6 +43,5 @@ namespace _Scripts.GameCore.Entity
                 componentSystem.RemoveFromSystem();
             } else Debug.LogError($"Entity does not contain {componentSystem}");
         }
-        
     }
 }
