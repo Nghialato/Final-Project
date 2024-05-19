@@ -2,6 +2,7 @@
 using _Scripts.GameCore.Entity.Enemy;
 using _Scripts.GameCore.HealthSys;
 using _Scripts.GameCore.MovementSys;
+using Assets._Scripts.GameCore.AttackSys;
 using UnityEngine;
 
 namespace _Scripts.GameCore.Logic
@@ -10,10 +11,21 @@ namespace _Scripts.GameCore.Logic
     {
         public HealthData healthData;
         public PositionData positionData;
-        
+        public EntityAttack playerAttack;
+
+        public static PlayerLogic instance;
+
+        private void Awake()
+        {
+            if (instance == null) instance = this;
+            else Destroy(gameObject);
+        }
+
         #region Move Logic
 
         private Vector3 _directionMove;
+
+        public Vector3 GetPlayerPosition() => positionData.position;
         private void ModifyPosition()
         {
             if (_directionMove == Vector3.zero)
@@ -50,7 +62,7 @@ namespace _Scripts.GameCore.Logic
 
         private void Attack()
         {
-            
+            playerAttack.Attack();
         }
 
         #endregion
@@ -95,6 +107,11 @@ namespace _Scripts.GameCore.Logic
             if (Input.GetKeyUp(KeyCode.S))
             {
                 _directionMove -= Vector3.down;
+            }
+
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                Attack();
             }
         }
 
