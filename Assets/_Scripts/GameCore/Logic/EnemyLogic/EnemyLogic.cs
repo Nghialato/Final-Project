@@ -1,6 +1,7 @@
 ﻿using System;
 using _Scripts.GameCore.HealthSys;
 using _Scripts.GameCore.MovementSys;
+using _Scripts.GameCore.ViewSys;
 using Assets._Scripts.GameCore.AttackSys;
 using UnityEngine;
 
@@ -10,6 +11,7 @@ namespace _Scripts.GameCore.Logic
     {
         public HealthData healthData;
         public PositionData positionData;
+        public ViewData viewData;
         public EntityAttack enemyAttack;
 
         private bool _isDetected;
@@ -49,25 +51,20 @@ namespace _Scripts.GameCore.Logic
         private void MoveToPlayer()
         {
             var direction = PlayerLogicEts.GetPosition() - positionData.position;
-            positionData.position = direction.normalized * (positionData.speed * Time.deltaTime);
+            positionData.position += direction.normalized * (positionData.speed * Time.deltaTime);
             positionData.dirty = true;
         }
 
         private void MoveBySetPath()
         {
             var direction = (pathMove[1] - pathMove[0]) * moveReserve;
-            positionData.position = direction.normalized * (positionData.speed * Time.deltaTime);
-            processMoveByPath = Mathf.Clamp(Vector3.Distance(positionData.position, pathMove[0]) / pathMoveLength, 0, 1);
+            positionData.position += direction.normalized * (positionData.speed * Time.deltaTime);
+            processMoveByPath = Mathf.Clamp(Vector3.Distance(positionData.position, moveReserve == 1 ? pathMove[0] : pathMove[1]) / pathMoveLength, 0, 1);
             if (processMoveByPath == 1)
             {
-                moveReserve = -1;
-                positionData.position = pathMove[1];
-            }
-
-            if (processMoveByPath == 0)
-            {
-                moveReserve = 1;
-                positionData.position = pathMove[0];
+                positionData.position = moveReserve == 1 ? pathMove[1] : pathMove[0];
+                moveReserve *= -1;
+                processMoveByPath = 0;
             }
             positionData.dirty = true;
         }
@@ -118,7 +115,7 @@ namespace _Scripts.GameCore.Logic
 
         private void Update()
         {
-            if(Vector3.Distance(PlayerLogicEts.GetPosition(), positionData.position) < enemyAttack.rangeView)
+            if(Vector3.Distance(PlayerLogicEts.GetPosition(), positionData.position) < viewData.viewRange)
             {
                 if (moveType != MoveType.MoveToPlayer)
                 {
