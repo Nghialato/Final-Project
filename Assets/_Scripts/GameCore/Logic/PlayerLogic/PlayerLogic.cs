@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using _Scripts.GameCore.Entity.Enemy;
 using _Scripts.GameCore.HealthSys;
 using _Scripts.GameCore.MovementSys;
+using _Scripts.GameCore.ViewSys;
 using Assets._Scripts.GameCore.AttackSys;
 using UnityEngine;
 
@@ -11,21 +13,20 @@ namespace _Scripts.GameCore.Logic
     {
         public HealthData healthData;
         public PositionData positionData;
+        public ViewData viewData;
         public EntityAttack playerAttack;
 
-        public static PlayerLogic instance;
-
+        private List<EnemyLogic> _enemyLogics = new(16);
+        
         private void Awake()
         {
-            if (instance == null) instance = this;
-            else Destroy(gameObject);
+            this.Init();
         }
 
         #region Move Logic
 
         private Vector3 _directionMove;
 
-        public Vector3 GetPlayerPosition() => positionData.position;
         private void ModifyPosition()
         {
             if (_directionMove == Vector3.zero)
@@ -63,6 +64,16 @@ namespace _Scripts.GameCore.Logic
         private void Attack()
         {
             playerAttack.Attack();
+        }
+
+        public void EnemyDetector(EnemyLogic enemyLogic)
+        {
+            if (_enemyLogics.Contains(enemyLogic) == false) _enemyLogics.Add(enemyLogic);
+        }
+
+        public void EnemyLost(EnemyLogic enemyLogic)
+        {
+            if (_enemyLogics.Contains(enemyLogic)) _enemyLogics.Remove(enemyLogic);
         }
 
         #endregion
