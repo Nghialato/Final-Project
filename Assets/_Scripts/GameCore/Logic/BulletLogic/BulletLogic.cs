@@ -10,12 +10,12 @@ namespace _Scripts.GameCore.Logic.BulletLogic
         public PositionData positionData;
         public ViewData viewData;
         private Vector3 _targetPosition;
-        private bool _isFollowPlayer;
+        private bool _isFollowTarget;
 
-        public void UpdateTarget(Vector3 targetPosition, bool isFollowPlayer)
+        public void UpdateTarget(Vector3 targetPosition, bool isFollowTarget = false)
         {
             _targetPosition = targetPosition;
-            _isFollowPlayer = isFollowPlayer;
+            _isFollowTarget = isFollowTarget;
         }
 
         #region Move Logic
@@ -31,12 +31,12 @@ namespace _Scripts.GameCore.Logic.BulletLogic
 
         private void Update()
         {
-            if (_isFollowPlayer)
+            if (_isFollowTarget)
             {
                 if (Vector3.Distance(positionData.position, PlayerLogicEts.GetPosition()) >
                     viewData.viewRange)
                     UpdateTarget(PlayerLogicEts.GetPosition(), true);
-                else _isFollowPlayer = false;
+                else _isFollowTarget = false;
             }
             MoveToTarget();
         }

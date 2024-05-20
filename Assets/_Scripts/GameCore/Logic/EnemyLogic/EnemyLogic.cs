@@ -1,5 +1,4 @@
-﻿using System;
-using _Scripts.GameCore.HealthSys;
+﻿using _Scripts.GameCore.HealthSys;
 using _Scripts.GameCore.MovementSys;
 using _Scripts.GameCore.ViewSys;
 using Assets._Scripts.GameCore.AttackSys;
@@ -13,6 +12,7 @@ namespace _Scripts.GameCore.Logic
         public PositionData positionData;
         public ViewData viewData;
         public EntityAttack enemyAttack;
+        public float distanceToPlayer;
 
         private bool _isDetected;
 
@@ -99,14 +99,16 @@ namespace _Scripts.GameCore.Logic
 
         private void CheckInPlayerRangeView()
         {
-            if(PlayerLogicEts.CheckInRange(positionData.position) && _isDetected == false)
+            var inRange = PlayerLogicEts.CheckInRange(positionData.position);
+            if(inRange && _isDetected == false)
             {
                 PlayerLogicEts.DetectEnemy(this);
+                distanceToPlayer = Vector3.Distance(PlayerLogicEts.GetPosition(), positionData.position);
                 _isDetected = true;
                 return;
             }
 
-            if (!_isDetected) return;
+            if (inRange || !_isDetected) return;
             PlayerLogicEts.LostEnemy(this);
             _isDetected = false;
         }

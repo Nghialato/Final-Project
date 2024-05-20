@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using _Scripts.GameCore.Entity.Enemy;
+﻿using System.Collections.Generic;
 using _Scripts.GameCore.HealthSys;
 using _Scripts.GameCore.MovementSys;
 using _Scripts.GameCore.ViewSys;
@@ -16,7 +14,8 @@ namespace _Scripts.GameCore.Logic
         public ViewData viewData;
         public EntityAttack playerAttack;
 
-        private List<EnemyLogic> _enemyLogics = new(16);
+        [SerializeField] private List<EnemyLogic> _enemyLogics = new(16);
+        private EnemyLogic nearestEnemy;
         
         private void Awake()
         {
@@ -40,6 +39,7 @@ namespace _Scripts.GameCore.Logic
         private void FixedUpdate()
         {
             ModifyPosition();
+            DetectNearestEnemy();
         }
 
         #endregion
@@ -48,7 +48,6 @@ namespace _Scripts.GameCore.Logic
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            Debug.Log("Collision");
             if (other.gameObject.TryGetComponent(out EnemyLogic enemyManager))
             {
                 enemyManager.DamageHealth(1);
@@ -63,7 +62,26 @@ namespace _Scripts.GameCore.Logic
 
         private void Attack()
         {
-            playerAttack.Attack();
+            if (nearestEnemy is null) return;
+            playerAttack.Attack(positionData.position, nearestEnemy.positionData.position);
+        }
+
+        private void DetectNearestEnemy()
+        {
+            if (_enemyLogics.Count == 0)
+            {
+                nearestEnemy = null;
+                return;
+            }
+
+            var distanceNearest = viewData.viewRange;
+            for (int i = 0; i < _enemyLogics.Count; i++)
+            {
+                if (_enemyLogics[i].distanceToPlayer < distanceNearest)
+                {
+                    nearestEnemy = _enemyLogics[i];
+                }
+            }
         }
 
         public void EnemyDetector(EnemyLogic enemyLogic)
