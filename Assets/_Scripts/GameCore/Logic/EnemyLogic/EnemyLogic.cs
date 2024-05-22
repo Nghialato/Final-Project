@@ -1,4 +1,5 @@
-﻿using _Scripts.GameCore.HealthSys;
+﻿using _Scripts.GameCore.Entity.Bullet;
+using _Scripts.GameCore.HealthSys;
 using _Scripts.GameCore.MovementSys;
 using _Scripts.GameCore.ViewSys;
 using Assets._Scripts.GameCore.AttackSys;
@@ -31,6 +32,18 @@ namespace _Scripts.GameCore.Logic
         {
             healthData.health -= dame;
             healthData.dirty = true;
+            CheckAlive();
+        }
+
+        private void CheckAlive()
+        {
+            if (healthData.health > 0) return;
+            Death();
+        }
+
+        private void Death()
+        {
+            gameObject.SetActive(false);
         }
 
         #endregion
@@ -51,20 +64,42 @@ namespace _Scripts.GameCore.Logic
         private void MoveToPlayer()
         {
             var direction = PlayerLogicEts.GetPosition() - positionData.position;
-            positionData.position += direction.normalized * (positionData.speed * Time.deltaTime);
+            positionData.position += direction.normalized * (positionData.speedMove * Time.deltaTime);
+            var targetRotation = Vector2.SignedAngle(Vector2.up, direction);
+            if (targetRotation > positionData.rotation)
+            {
+                positionData.rotation += positionData.speedRotate;
+                if (positionData.rotation > targetRotation) positionData.rotation = targetRotation;
+            }
+            else
+            {
+                positionData.rotation -= positionData.speedRotate;
+                if (positionData.rotation < targetRotation) positionData.rotation = targetRotation;
+            }
             positionData.dirty = true;
         }
 
         private void MoveBySetPath()
         {
             var direction = (pathMove[1] - pathMove[0]) * moveReserve;
-            positionData.position += direction.normalized * (positionData.speed * Time.deltaTime);
+            positionData.position += direction.normalized * (positionData.speedMove * Time.deltaTime);
             processMoveByPath = Mathf.Clamp(Vector3.Distance(positionData.position, moveReserve == 1 ? pathMove[0] : pathMove[1]) / pathMoveLength, 0, 1);
             if (processMoveByPath == 1)
             {
                 positionData.position = moveReserve == 1 ? pathMove[1] : pathMove[0];
                 moveReserve *= -1;
                 processMoveByPath = 0;
+            }
+            var targetRotation = Vector2.SignedAngle(Vector2.up, direction);
+            if (targetRotation > positionData.rotation)
+            {
+                positionData.rotation += positionData.speedRotate;
+                if (positionData.rotation > targetRotation) positionData.rotation = targetRotation;
+            }
+            else
+            {
+                positionData.rotation -= positionData.speedRotate;
+                if (positionData.rotation < targetRotation) positionData.rotation = targetRotation;
             }
             positionData.dirty = true;
         }
@@ -82,7 +117,7 @@ namespace _Scripts.GameCore.Logic
                     return;
                 }
                 var directionMove = positionMoveTo - positionData.position;
-                positionData.position += directionMove.normalized * (positionData.speed * Time.deltaTime);
+                positionData.position += directionMove.normalized * (positionData.speedMove * Time.deltaTime);
                 positionData.dirty = true;
                 return;
             }
@@ -115,9 +150,37 @@ namespace _Scripts.GameCore.Logic
 
         #endregion
 
+        #region Attack Logic
+
+        private void TryAttack()
+        {
+            enemyAttack.Attack(positionData.position, PlayerLogicEts.GetPositionData());
+        }
+
+        #endregion
+
+        #region View Logic
+
+        private bool IsSawPlayer()
+        {
+            return Vector3.Distance(PlayerLogicEts.GetPosition(), positionData.position) < viewData.viewRange;
+        }
+
+        #endregion
+        private void OnTriggerEnter2D(Collider2D other)
+        {
+            if(other.gameObject.TryGetComponent(out BulletLogic bulletLogic))
+            {
+                if (bulletLogic.rootBullet == RootBullet.PlayerRoot)
+                {
+                    DamageHealth(1);
+                }
+            }
+        }
+
         private void Update()
         {
-            if(Vector3.Distance(PlayerLogicEts.GetPosition(), positionData.position) < viewData.viewRange)
+            if(IsSawPlayer())
             {
                 if (moveType != MoveType.MoveToPlayer)
                 {
@@ -125,6 +188,7 @@ namespace _Scripts.GameCore.Logic
                     moveType = MoveType.MoveToPlayer;
                     isChangeStateMove = false;
                 }
+                TryAttack();
             }
             else
             {

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using _Scripts.GameCore.MovementSys;
+using UnityEngine;
 
 namespace _Scripts.GameCore.Logic
 {
@@ -12,6 +13,8 @@ namespace _Scripts.GameCore.Logic
         }
 
         public static Vector3 GetPosition() => _playerLogic.positionData.position;
+
+        public static PositionData GetPositionData() => _playerLogic.positionData;
 
         public static bool CheckInRange(Vector3 enemyPosition)
         {

@@ -2,6 +2,10 @@
 {
     public interface IBullet
     {
-        
+    }
+
+    public enum RootBullet
+    {
+        EnemyRoot, PlayerRoot
     }
 }

@@ -1,42 +1,59 @@
 ﻿using System;
+using _Scripts.GameCore.Entity.Bullet;
 using _Scripts.GameCore.MovementSys;
 using _Scripts.GameCore.ViewSys;
 using UnityEngine;
+using UnityEngine.Serialization;
 
-namespace _Scripts.GameCore.Logic.BulletLogic
+namespace _Scripts.GameCore.Logic
 {
     public class BulletLogic : MonoBehaviour
     {
         public PositionData positionData;
         public ViewData viewData;
-        private Vector3 _targetPosition;
-        private bool _isFollowTarget;
+        public RootBullet rootBullet;
+        [SerializeField] private PositionData targetPosition;
+        private Vector3 realTarget;
+        [SerializeField] private bool isFollowTarget;
+        private Vector3 direction;
 
-        public void UpdateTarget(Vector3 targetPosition, bool isFollowTarget = false)
+        public void InitBullet(RootBullet rootBulletInit, Vector3 positionInit, PositionData target, bool setFollowTarget = false)
         {
-            _targetPosition = targetPosition;
-            _isFollowTarget = isFollowTarget;
+            rootBullet = rootBulletInit;
+            positionData.position = positionInit;
+            realTarget = target.position;
+            positionData.dirty = true;
+            targetPosition = target;
+            isFollowTarget = setFollowTarget;
+            direction = realTarget - positionData.position;
         }
 
         #region Move Logic
 
         private void MoveToTarget()
         {
-            var direction = _targetPosition - positionData.position;
-            positionData.position += direction.normalized * (positionData.speed * Time.deltaTime);
+            positionData.position += direction.normalized * (positionData.speedMove * Time.deltaTime);
             positionData.dirty = true;
-        }        
+        }
+
+        private bool IsTargetOutRange()
+        {
+            return Vector3.Distance(positionData.position, targetPosition.position) >
+                   viewData.viewRange;
+        }
 
         #endregion
 
         private void Update()
         {
-            if (_isFollowTarget)
+            if (isFollowTarget)
             {
-                if (Vector3.Distance(positionData.position, PlayerLogicEts.GetPosition()) >
-                    viewData.viewRange)
-                    UpdateTarget(PlayerLogicEts.GetPosition(), true);
-                else _isFollowTarget = false;
+                if (IsTargetOutRange())
+                {
+                    realTarget = targetPosition.position;
+                    direction = realTarget - positionData.position;
+                }
+                else isFollowTarget = false;
             }
             MoveToTarget();
         }

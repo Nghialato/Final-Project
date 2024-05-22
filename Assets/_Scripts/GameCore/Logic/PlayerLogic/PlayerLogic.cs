@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using _Scripts.GameCore.Entity;
 using _Scripts.GameCore.HealthSys;
 using _Scripts.GameCore.MovementSys;
 using _Scripts.GameCore.ViewSys;
@@ -16,6 +18,8 @@ namespace _Scripts.GameCore.Logic
 
         [SerializeField] private List<EnemyLogic> _enemyLogics = new(16);
         private EnemyLogic nearestEnemy;
+        private bool isTargeting;
+        private bool isPauseMoving;
         
         private void Awake()
         {
@@ -33,7 +37,25 @@ namespace _Scripts.GameCore.Logic
                 return;
             }
             positionData.dirty = true;
-            positionData.position += _directionMove.normalized * (positionData.speed * Time.deltaTime);
+            positionData.position += _directionMove.normalized * (positionData.speedMove * Time.deltaTime);
+            var targetRotation = 0f;
+            if (isTargeting)
+            {
+                var directionTarget = nearestEnemy.positionData.position - positionData.position;
+                targetRotation = Vector2.SignedAngle(Vector2.up, directionTarget);
+            } else 
+                targetRotation = Vector2.SignedAngle(Vector2.up, _directionMove);
+
+            if (targetRotation > positionData.rotation)
+            {
+                positionData.rotation += positionData.speedRotate;
+                if (positionData.rotation > targetRotation) positionData.rotation = targetRotation;
+            }
+            else
+            {
+                positionData.rotation -= positionData.speedRotate;
+                if (positionData.rotation < targetRotation) positionData.rotation = targetRotation;
+            }
         }
 
         private void FixedUpdate()
@@ -54,6 +76,20 @@ namespace _Scripts.GameCore.Logic
                 healthData.health -= 1;
                 healthData.dirty = true;
             }
+
+            if (other.gameObject.TryGetComponent(out IWall wall))
+            {
+                _directionMove = Vector3.zero;
+                isPauseMoving = true;
+            }
+        }
+
+        private void OnTriggerExit2D(Collider2D other)
+        {
+            if (other.gameObject.TryGetComponent(out IWall wall))
+            {
+                isPauseMoving = false;
+            }
         }
 
         #endregion
@@ -63,7 +99,7 @@ namespace _Scripts.GameCore.Logic
         private void Attack()
         {
             if (nearestEnemy is null) return;
-            playerAttack.Attack(positionData.position, nearestEnemy.positionData.position);
+            playerAttack.Attack(positionData.position, nearestEnemy.positionData);
         }
 
         private void DetectNearestEnemy()
@@ -71,6 +107,7 @@ namespace _Scripts.GameCore.Logic
             if (_enemyLogics.Count == 0)
             {
                 nearestEnemy = null;
+                isTargeting = false;
                 return;
             }
 
@@ -80,9 +117,12 @@ namespace _Scripts.GameCore.Logic
                 if (_enemyLogics[i].distanceToPlayer < distanceNearest)
                 {
                     nearestEnemy = _enemyLogics[i];
+                    isTargeting = true;
                 }
             }
         }
+
+        public EnemyLogic NearestEnemy() => nearestEnemy;
 
         public void EnemyDetector(EnemyLogic enemyLogic)
         {
@@ -118,24 +158,30 @@ namespace _Scripts.GameCore.Logic
                 _directionMove += Vector3.down;
             }
             
-            if (Input.GetKeyUp(KeyCode.A))
+            if (Input.GetKeyUp(KeyCode.A) && isPauseMoving == false)
             {
                 _directionMove -= Vector3.left;
             }
             
-            if (Input.GetKeyUp(KeyCode.D))
+            if (Input.GetKeyUp(KeyCode.D) && isPauseMoving == false)
             {
                 _directionMove -= Vector3.right;
             }
             
-            if (Input.GetKeyUp(KeyCode.W))
+            if (Input.GetKeyUp(KeyCode.W) && isPauseMoving == false)
             {
                 _directionMove -= Vector3.up;
             }
             
-            if (Input.GetKeyUp(KeyCode.S))
+            if (Input.GetKeyUp(KeyCode.S) && isPauseMoving == false)
             {
                 _directionMove -= Vector3.down;
+            }
+
+            if (Input.GetKeyUp(KeyCode.A) || Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.D) ||
+                Input.GetKeyUp(KeyCode.W))
+            {
+                isPauseMoving = false;
             }
 
             if (Input.GetKeyDown(KeyCode.Space))
