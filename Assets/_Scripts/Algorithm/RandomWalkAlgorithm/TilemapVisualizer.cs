@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -11,21 +12,91 @@ public class TilemapVisualizer : MonoBehaviour
     [SerializeField]
     private TileBase floorTile, wallTop, wallSideRight, wallSiderLeft, wallBottom, wallFull, 
         wallInnerCornerDownLeft, wallInnerCornerDownRight, 
-        wallDiagonalCornerDownRight, wallDiagonalCornerDownLeft, wallDiagonalCornerUpRight, wallDiagonalCornerUpLeft;
+        wallDiagonalCornerDownRight, wallDiagonalCornerDownLeft, wallDiagonalCornerUpRight, wallDiagonalCornerUpLeft,
+        mazeTile, dotTile;
+
+    #region Paint Imediate
 
     public void PaintFloorTiles(IEnumerable<Vector2Int> floorPositions)
     {
         PaintTiles(floorPositions, floorTilemap, floorTile);
     }
 
-    private void PaintTiles(IEnumerable<Vector2Int> positions, Tilemap tilemap, TileBase tile)
+    public void PaintMazeTiles(IEnumerable<Vector2Int> mazePosition)
+    {
+        PaintTiles(mazePosition, floorTilemap, mazeTile);
+    }
+
+    public void PaintDotTiles(IEnumerable<Vector2Int> dotPosition)
+    {
+        PaintTiles(dotPosition, floorTilemap, dotTile);
+    }
+
+    private void PaintTiles(IEnumerable<Vector2Int> positions, Tilemap tileMap, TileBase tile)
     {
         foreach (var position in positions)
         {
-            PaintSingleTile(tilemap, tile, position);
+            PaintSingleTile(tileMap, tile, position);
         }
     }
 
+    
+    
+
+    #endregion
+    #region Paint Async
+
+    public async Task PaintFloorTilesAsync(IEnumerable<Vector2Int> floorPositions)
+    {
+        await PaintTilesAsync(floorPositions, floorTilemap, floorTile);
+    }
+    
+    public async Task PaintMazeTilesAsync(IEnumerable<Vector2Int> mapPositions)
+    {
+        await PaintTilesAsync(mapPositions, floorTilemap, floorTile);
+    }
+    
+    public async Task PaintDotTilesAsync(IEnumerable<Vector2Int> dotPositions)
+    {
+        await PaintTilesAsync(dotPositions, floorTilemap, dotTile);
+    }
+
+    private async Task PaintTilesAsync(IEnumerable<Vector2Int> positions, Tilemap tileMap, TileBase tile)
+    {
+        var pos = positions.GetEnumerator();
+        while (pos.MoveNext())
+        {
+            await Task.Delay(10); 
+            PaintSingleTile(tileMap, tile, pos.Current);
+            if (pos.MoveNext())
+            {
+                PaintSingleTile(tileMap, tile, pos.Current);
+            }
+            
+            if (pos.MoveNext())
+            {
+                PaintSingleTile(tileMap, tile, pos.Current);
+            }
+            
+            if (pos.MoveNext())
+            {
+                PaintSingleTile(tileMap, tile, pos.Current);
+            }
+            
+            if (pos.MoveNext())
+            {
+                PaintSingleTile(tileMap, tile, pos.Current);
+            }
+            
+            if (pos.MoveNext())
+            {
+                PaintSingleTile(tileMap, tile, pos.Current);
+            }
+        }
+    }    
+
+    #endregion
+    
     internal void PaintSingleBasicWall(Vector2Int position, string binaryType)
     {
         int typeAsInt = Convert.ToInt32(binaryType, 2);

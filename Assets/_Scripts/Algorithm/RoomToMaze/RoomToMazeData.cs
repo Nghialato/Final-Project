@@ -17,7 +17,10 @@ namespace _Scripts.Algorithm
         
         [Range(0, 100)]
         public int extraConnectorChance;
-        
+
+        [Range(0, 100)]
+        public int imperfectRate;
+
         // Todo Set up data for room
     }
 
