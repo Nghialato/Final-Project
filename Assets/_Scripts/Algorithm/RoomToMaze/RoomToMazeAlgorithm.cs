@@ -26,6 +26,7 @@ namespace _Scripts.Algorithm
             public int height;
             public bool isConnectted = false;
             public List<Vector2Int> listPortals = new ();
+            public int chanceToChangePortal = 50;
 
             public RoomData(int roomId, Vector2Int roomPos, int width, int height)
             {
@@ -36,9 +37,22 @@ namespace _Scripts.Algorithm
                 listPortals.Clear();
             }
 
-            public bool IsValidPortal(int i, int j)
+            public bool IsValidPortal(int i, int j, out bool sameSide)
             {
-                return i == roomPos.x - 1 || i == roomPos.x + height || j == roomPos.y || j == roomPos.y + width;
+                var validPos = (i == roomPos.x || i == roomPos.x + width) &&
+                               (j == roomPos.y || j == roomPos.y + height);
+                foreach (var portal in listPortals)
+                {
+                    if (portal.x == i || portal.y == j)
+                    {
+                        sameSide = true;
+                        return validPos;
+                    }
+                }
+
+                sameSide = false;
+                
+                return validPos;
             }
         }
         
@@ -96,12 +110,15 @@ namespace _Scripts.Algorithm
 
         private async Task RunBuildMap(HashSet<Vector2Int> floor, Queue<Vector2Int> maze, HashSet<Vector2Int> dot)
         {
-            // foreach (var room in _listRooms)
-            // {
-            //     _mazeQueue.Enqueue(room.listPortals[0]);
-            // }
+            foreach (var room in _listRooms)
+            {
+                foreach (var portal in room.listPortals)
+                {
+                    _mazeQueue.Enqueue(portal);
+                }
+            }
             tilemapVisualizer.PaintFloorTiles(floor);
-            tilemapVisualizer.PaintMazeTiles(_mazeQueue);
+            await tilemapVisualizer.PaintMazeTilesAsync(_mazeQueue);
             await tilemapVisualizer.PaintDotTilesAsync(dot);
         } 
 
@@ -355,26 +372,50 @@ namespace _Scripts.Algorithm
         {
             BuildConnectablePosition(out List<Vector2Int> listPossiblePortals);
 
-            // foreach (var portal in listPossiblePortals)
-            // {
-            //     foreach (var room in _listRooms)
-            //     {
-            //         if (!room.IsValidPortal(portal.x, portal.y)) continue;
-            //         
-            //         if (room.isConnectted)
-            //         {
-            //             if (Random.Range(0, 100) < roomToMazeData.imperfectRate)
-            //             {
-            //                 room.listPortals.Add(portal);
-            //             }
-            //         }
-            //         else
-            //         {
-            //             room.listPortals.Add(portal);
-            //             room.isConnectted = true;
-            //         }
-            //     }
-            // }
+            foreach (var portal in listPossiblePortals)
+            {
+                foreach (var room in _listRooms)
+                {
+                    if (!room.IsValidPortal(portal.x, portal.y, out var sameSide))
+                    {
+                        continue;
+                    }
+                    
+                    if (sameSide)
+                    {
+                        for (var iter = 0; iter < room.listPortals.Count; iter++)
+                        {
+                            if (portal.x == room.listPortals[iter].x || portal.y == room.listPortals[iter].y)
+                            {
+                                if (Random.Range(0, 100) < room.chanceToChangePortal)
+                                {
+                                    _logicMap[room.listPortals[iter].x, room.listPortals[iter].y] = (int)MapType.Dot;
+                                    room.listPortals[iter] = portal;
+                                    _logicMap[portal.x, portal.y] = (int)MapType.Maze;
+                                }
+                                break;
+                            }
+                        }
+                        
+                        continue;
+                    }
+                    
+                    if (room.isConnectted)
+                    {
+                        if (Random.Range(0, 100) < roomToMazeData.imperfectRate)
+                        {
+                            room.listPortals.Add(portal);
+                            _logicMap[portal.x, portal.y] = (int)MapType.Maze;
+                        }
+                    }
+                    else
+                    {
+                        room.listPortals.Add(portal);
+                        room.isConnectted = true;
+                        _logicMap[portal.x, portal.y] = (int)MapType.Maze;
+                    }
+                }
+            }
         }
 
         private void BuildConnectablePosition(out List<Vector2Int> listPossiblePortals)
@@ -395,14 +436,14 @@ namespace _Scripts.Algorithm
 
         private bool IsValidConnectPosition(int x, int y)
         {
-            if ((_logicMap[x + 0, y + 1] == (int)MapType.Maze &&
-                 _logicMap[x + 0, y - 1] == (int)MapType.Floor) || 
-                (_logicMap[x + 0, y - 1] == (int)MapType.Maze &&
-                 _logicMap[x + 0, y + 1] == (int)MapType.Floor) || 
-                (_logicMap[x + 1, y + 0] == (int)MapType.Maze &&
-                 _logicMap[x - 1, y - 0] == (int)MapType.Floor) ||
-                (_logicMap[x - 1, y + 0] == (int)MapType.Maze &&
-                 _logicMap[x + 1, y - 0] == (int)MapType.Floor))
+            if ((_logicMap[x, y + 1] == (int)MapType.Maze &&
+                 _logicMap[x, y - 1] == (int)MapType.Floor) || 
+                (_logicMap[x, y - 1] == (int)MapType.Maze &&
+                 _logicMap[x, y + 1] == (int)MapType.Floor) || 
+                (_logicMap[x + 1, y] == (int)MapType.Maze &&
+                 _logicMap[x - 1, y] == (int)MapType.Floor) ||
+                (_logicMap[x - 1, y] == (int)MapType.Maze &&
+                 _logicMap[x + 1, y ] == (int)MapType.Floor))
             {
                 return true;
             }
