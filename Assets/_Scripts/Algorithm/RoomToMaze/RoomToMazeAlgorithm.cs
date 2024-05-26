@@ -16,6 +16,7 @@ namespace _Scripts.Algorithm
         private Queue<Vector2Int> _mazeQueue = new();
 
         [SerializeField] private List<RoomData> _listRooms = new();
+        private Queue<Vector2Int> _deadEnds;
 
         [Serializable]
         private class RoomData
@@ -26,7 +27,6 @@ namespace _Scripts.Algorithm
             public int height;
             public bool isConnectted = false;
             public List<Vector2Int> listPortals = new ();
-            public int chanceToChangePortal = 50;
 
             public RoomData(int roomId, Vector2Int roomPos, int width, int height)
             {
@@ -37,22 +37,25 @@ namespace _Scripts.Algorithm
                 listPortals.Clear();
             }
 
-            public bool IsValidPortal(int i, int j, out bool sameSide)
+            public bool IsValidPortal(int i, int j)
             {
-                var validPos = (i == roomPos.x || i == roomPos.x + width) &&
-                               (j == roomPos.y || j == roomPos.y + height);
+                var validPos = (i >= roomPos.x && i <= roomPos.x + width) &&
+                               (j >= roomPos.y && j <= roomPos.y + height);
+                
+                return validPos;
+            }
+
+            public bool IsHadPortalSameSide(int i, int j)
+            {
                 foreach (var portal in listPortals)
                 {
                     if (portal.x == i || portal.y == j)
                     {
-                        sameSide = true;
-                        return validPos;
+                        return true;
                     }
                 }
 
-                sameSide = false;
-                
-                return validPos;
+                return false;
             }
         }
         
@@ -63,7 +66,8 @@ namespace _Scripts.Algorithm
             HashSet<Vector2Int> dot = new();
             _mazeQueue = new();
             _listRooms.Clear();
-
+            _deadEnds = new Queue<Vector2Int>();
+            
             SizeMapValidation();
             
             _logicMap = new int[roomToMazeData.map.width, roomToMazeData.map.height];
@@ -82,7 +86,7 @@ namespace _Scripts.Algorithm
             
             ConnectRooms();
             
-            // RemoveDeadEnds();
+            RemoveDeadEnds();
 
             for (int i = 0; i < roomToMazeData.map.width; i++)
             {
@@ -105,10 +109,10 @@ namespace _Scripts.Algorithm
                 }
             }
 
-            RunBuildMap(floor, _mazeQueue, dot);
+            RunBuildMap(floor, maze, dot);
         }
 
-        private async Task RunBuildMap(HashSet<Vector2Int> floor, Queue<Vector2Int> maze, HashSet<Vector2Int> dot)
+        private async Task RunBuildMap(HashSet<Vector2Int> floor, HashSet<Vector2Int> maze, HashSet<Vector2Int> dot)
         {
             foreach (var room in _listRooms)
             {
@@ -118,7 +122,7 @@ namespace _Scripts.Algorithm
                 }
             }
             tilemapVisualizer.PaintFloorTiles(floor);
-            await tilemapVisualizer.PaintMazeTilesAsync(_mazeQueue);
+            tilemapVisualizer.PaintMazeTiles(maze);
             await tilemapVisualizer.PaintDotTilesAsync(dot);
         } 
 
@@ -193,8 +197,6 @@ namespace _Scripts.Algorithm
 
         private void GenMazeInMapFloodFill()
         {
-            var percentChangeDirection = 40;
-
             var startPos = PickStartPos();
 
             _logicMap[startPos.Item1, startPos.Item2] = (int)MapType.Maze;
@@ -211,9 +213,10 @@ namespace _Scripts.Algorithm
 
                 var direction = current.Item2;
                 
-                if(Random.Range(0, 100) > percentChangeDirection) directions.Shuffle();
-                else
+                if(Random.Range(0, 100) < roomToMazeData.percentChangeDirection) 
                 {
+                    // Change Direction
+                    directions.Shuffle();
                     direction = direction == directions[0] ? directions[1] : directions[0];
                 }
                 var neighbor = current.Item1 + direction * 2;
@@ -298,11 +301,13 @@ namespace _Scripts.Algorithm
                     }
                 }
                 
-                if(Random.Range(0, 100) > percentChangeDirection) directions.Shuffle();
-                else
+                if(Random.Range(0, 100) < percentChangeDirection) 
                 {
+                    // Change Direction
+                    directions.Shuffle();
                     direction = direction == directions[0] ? directions[1] : directions[0];
                 }
+
                 var neighbor = current.Item1 + direction * 2;
 
                 if (IsValidCell(neighbor.x, neighbor.y) && _logicMap[neighbor.x, neighbor.y] == (int)MapType.None)
@@ -312,24 +317,23 @@ namespace _Scripts.Algorithm
                     queue.Enqueue((neighbor, direction));
                     _mazeQueue.Enqueue(new Vector2Int(neighbor.x - direction.x, neighbor.y - direction.y));
                     _mazeQueue.Enqueue(new Vector2Int(neighbor.x, neighbor.y));
-                    
                 }
                 else
                 {
                     var haveDirectionMove = false;
                     foreach (var dir in directions)
                     {
-                        var nei = current.Item1 + dir * 2;
+                        neighbor = current.Item1 + dir * 2;
 
-                        if (IsValidCell(nei.x, nei.y) && _logicMap[nei.x, nei.y] == (int)MapType.None)
+                        if (IsValidCell(neighbor.x, neighbor.y) && _logicMap[neighbor.x, neighbor.y] == (int)MapType.None)
                         {
                             if (haveDirectionMove == false)
                             {
-                                _logicMap[nei.x, nei.y] = (int)MapType.Maze;
-                                _logicMap[nei.x - dir.x, nei.y - dir.y] = (int)MapType.Maze;
-                                queue.Enqueue((nei, dir));
-                                _mazeQueue.Enqueue(new Vector2Int(nei.x - dir.x, nei.y - dir.y));
-                                _mazeQueue.Enqueue(new Vector2Int(nei.x, nei.y));
+                                _logicMap[neighbor.x, neighbor.y] = (int)MapType.Maze;
+                                _logicMap[neighbor.x - dir.x, neighbor.y - dir.y] = (int)MapType.Maze;
+                                queue.Enqueue((neighbor, dir));
+                                _mazeQueue.Enqueue(new Vector2Int(neighbor.x - dir.x, neighbor.y - dir.y));
+                                _mazeQueue.Enqueue(new Vector2Int(neighbor.x, neighbor.y));
                                 haveDirectionMove = true;
                                 continue;
                             }
@@ -337,7 +341,6 @@ namespace _Scripts.Algorithm
                         }
                     }
                 }
-
             }
         }
 
@@ -376,18 +379,18 @@ namespace _Scripts.Algorithm
             {
                 foreach (var room in _listRooms)
                 {
-                    if (!room.IsValidPortal(portal.x, portal.y, out var sameSide))
+                    if (!room.IsValidPortal(portal.x, portal.y))
                     {
                         continue;
                     }
                     
-                    if (sameSide)
+                    if (room.IsHadPortalSameSide(portal.x, portal.y))
                     {
                         for (var iter = 0; iter < room.listPortals.Count; iter++)
                         {
                             if (portal.x == room.listPortals[iter].x || portal.y == room.listPortals[iter].y)
                             {
-                                if (Random.Range(0, 100) < room.chanceToChangePortal)
+                                if (Random.Range(0, 100) < roomToMazeData.chanceToChangePortal)
                                 {
                                     _logicMap[room.listPortals[iter].x, room.listPortals[iter].y] = (int)MapType.Dot;
                                     room.listPortals[iter] = portal;
@@ -452,12 +455,110 @@ namespace _Scripts.Algorithm
         }
 
         #endregion
-        
+
+        #region Remove Dead End
 
         private void RemoveDeadEnds()
         {
+            for (int i = 0; i < roomToMazeData.map.width; i++)
+            {
+                for (int j = 0; j < roomToMazeData.map.height; j++)
+                {
+                    if (IsDeadEnd(i, j))
+                    {
+                        _deadEnds.Enqueue(new Vector2Int(i, j));
+                        continue;
+                    }
+
+                    if (IsTooActivePosition(i, j) && Random.Range(0, 100) < roomToMazeData.removeMazeRate)
+                    {
+                        _logicMap[i, j] = (int)MapType.None;
+                        var direction = new [] { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right};
+                        foreach (var dir in direction)
+                        {
+                            if (IsDeadEnd(i + dir.x, j + dir.y))
+                            {
+                                _deadEnds.Enqueue(new Vector2Int(i + dir.x, j + dir.y));
+                            }
+                        }
+                    }
+                }
+            }
             
+            
+            
+            var queueRemoveDeadEnds = new Queue<Vector2Int>();
+            while (_deadEnds.Count > 0)
+            {
+                var position = _deadEnds.Dequeue();
+                queueRemoveDeadEnds.Enqueue(position);
+                _logicMap[position.x, position.y] = (int)MapType.None;
+                var nextPossibleDeadEnd = position + GetDirDeadEnd(position.x, position.y);
+                if(GetDirDeadEnd(position.x, position.y) == Vector2Int.zero) Debug.Log("-----");
+                if (IsDeadEnd(nextPossibleDeadEnd.x, nextPossibleDeadEnd.y))
+                {
+                    _deadEnds.Enqueue(nextPossibleDeadEnd);
+                }
+            }
         }
+
+        private bool IsDeadEnd(int i, int j)
+        {
+            var direction = new [] { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right};
+
+            var deadDirection = 0;
+            foreach (var dir in direction)
+            {
+                if (IsValidCell(i + dir.x, j + dir.y))
+                {
+                    if (_logicMap[i + dir.x, j + dir.y] == (int)MapType.None || _logicMap[i + dir.x, j + dir.y] == (int)MapType.Dot)
+                    {
+                        deadDirection++;
+                    }
+                }
+                else deadDirection++;
+            }
+
+            return deadDirection == 3;
+        }
+
+        private bool IsTooActivePosition(int i, int j)
+        {
+            var direction = new [] { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right};
+
+            var deadDirection = 0;
+            foreach (var dir in direction)
+            {
+                if (IsValidCell(i + dir.x, j + dir.y))
+                {
+                    if (_logicMap[i + dir.x, j + dir.y] == (int)MapType.Maze)
+                    {
+                        deadDirection++;
+                    }
+                }
+                else deadDirection++;
+            }
+
+            return deadDirection == 3;
+        }
+
+        private Vector2Int GetDirDeadEnd(int i, int j)
+        {
+            var direction = new [] { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right};
+            var dirReturn = Vector2Int.zero;
+
+            foreach (var dir in direction)
+            {
+                if(IsValidCell(i + dir.x, j + dir.y) == false) continue;
+                if (_logicMap[i + dir.x, j + dir.y] == (int)MapType.None || _logicMap[i + dir.x, j + dir.y] == (int)MapType.Dot) continue;
+                dirReturn = dir;
+                break;
+            }
+
+            return dirReturn;
+        }
+
+        #endregion
 
     }
 

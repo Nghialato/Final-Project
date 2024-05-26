@@ -14,12 +14,16 @@ namespace _Scripts.Algorithm
 
         [Range(0, 1)]
         public float percentFillMap;
-        
-        [Range(0, 100)]
-        public int extraConnectorChance;
+
+        [Range(0, 100)] public int chanceToChangePortal;
 
         [Range(0, 100)]
         public int imperfectRate;
+        
+        [Range(0, 100)]
+        public int percentChangeDirection;
+
+        [Range(0, 100)] public int removeMazeRate;
 
         // Todo Set up data for room
     }
