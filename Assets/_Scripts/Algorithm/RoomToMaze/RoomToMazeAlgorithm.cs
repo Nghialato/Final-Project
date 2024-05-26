@@ -127,6 +127,26 @@ namespace _Scripts.Algorithm
 
             await tilemapVisualizer.DeleteDotTilesAsync(dot);
             await tilemapVisualizer.DeleteFloorTile(queueRemoveDeadEnds);
+            
+            floor.Clear();
+            
+            for (int i = 0; i < roomToMazeData.map.width; i++)
+            {
+                for (int j = 0; j < roomToMazeData.map.height; j++)
+                {
+                    if (_logicMap[i, j] == (int)MapType.Floor)
+                    {
+                        floor.Add(new Vector2Int(i, j));
+                    }
+                    
+                    if (_logicMap[i, j] == (int)MapType.Maze)
+                    {
+                        floor.Add(new Vector2Int(i, j));
+                    }
+                }
+            }
+            
+            WallGenerator.CreateWalls(floor, tilemapVisualizer);
         } 
 
         private void SizeMapValidation()
@@ -152,8 +172,8 @@ namespace _Scripts.Algorithm
 
             var averageSize = (int)Mathf.Sqrt(averageAreaRoom);
 
-            var minRoomSize = averageSize - 2;
-            var maxRoomSize = averageSize + 2;
+            var minRoomSize = averageSize - 2 - roomToMazeData.distanceBetweenRoom;
+            var maxRoomSize = averageSize + 2 - roomToMazeData.distanceBetweenRoom;
 
             var numRooms = 0;
             for (var attempts = 0; attempts < numTries && numRooms <= roomToMazeData.numRoomsRequired; attempts++)
@@ -171,10 +191,11 @@ namespace _Scripts.Algorithm
                 yPos -= yPos % 2;
 
                 var roomFits = true;
-                for (var y = yPos; y < yPos + roomHeight; y++)
+                for (var y = yPos - roomToMazeData.distanceBetweenRoom; y < yPos + roomHeight + roomToMazeData.distanceBetweenRoom; y++)
                 {
-                    for (var x = xPos; x < xPos + roomWidth; x++)
+                    for (var x = xPos - roomToMazeData.distanceBetweenRoom; x < xPos + roomWidth + roomToMazeData.distanceBetweenRoom; x++)
                     {
+                        if(IsValidCell(x, y) == false) continue;
                         if (_logicMap[x, y] == (int)MapType.None) continue;
                         roomFits = false;
                         break;

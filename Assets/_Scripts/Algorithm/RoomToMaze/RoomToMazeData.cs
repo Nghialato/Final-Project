@@ -25,6 +25,9 @@ namespace _Scripts.Algorithm
 
         [Range(0, 100)] public int removeMazeRate;
 
+        public int distanceBetweenRoom;
+        public int distanceBetweenRoomAndPath = 4;
+
         // Todo Set up data for room
     }
 
