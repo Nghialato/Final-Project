@@ -52,6 +52,57 @@ namespace _Scripts.Algorithm
             
             ConnectRoomsAndCorridors.Connect(roomToMazeData, ref _logicMap, ref _listRooms);
             
+            RemoveDeadEnds(out var queueRemoveDeadEnds);
+            
+            foreach (var room in _listRooms)
+            {
+                for (int i = 0; i < room.width; i++)
+                {
+                    _logicMap[room.roomPos.x + i, room.roomPos.y] = (int)MapType.None;
+                    if (_logicMap[room.roomPos.x + i, room.roomPos.y - 1] == (int)MapType.Maze)
+                    {
+                        _logicMap[room.roomPos.x + i, room.roomPos.y] = (int)MapType.Maze;
+                    }
+                    
+                    _logicMap[room.roomPos.x + i, room.roomPos.y + room.height - 1] = (int)MapType.None;
+                    if (_logicMap[room.roomPos.x + i, room.roomPos.y + room.height] == (int)MapType.Maze)
+                    {
+                        _logicMap[room.roomPos.x + i, room.roomPos.y + room.height - 1] = (int)MapType.Maze;
+                    }
+                }
+                
+                for (int i = 0; i < room.height; i++)
+                {
+                    _logicMap[room.roomPos.x, room.roomPos.y + i] = (int)MapType.None;
+                    if (_logicMap[room.roomPos.x - 1, room.roomPos.y + i] == (int)MapType.Maze)
+                    {
+                        _logicMap[room.roomPos.x, room.roomPos.y + i] = (int)MapType.Maze;
+                    }
+                    
+                    _logicMap[room.roomPos.x + room.width - 1, room.roomPos.y + i] = (int)MapType.None;
+                    if (_logicMap[room.roomPos.x + room.width, room.roomPos.y + i] == (int)MapType.Maze)
+                    {
+                        _logicMap[room.roomPos.x + room.width - 1, room.roomPos.y + i] = (int)MapType.Maze;
+                    }
+                }
+            }
+            
+            RemoveDeadEnds(out var queueRemoveDead);
+
+            foreach (var room in _listRooms)
+            {
+                if (room.isConnectted == false)
+                {
+                    for (var y = room.roomPos.y; y < room.roomPos.y + room.height; y++)
+                    {
+                        for (var x = room.roomPos.x; x < room.roomPos.x + room.width; x++)
+                        {
+                            _logicMap[x, y] = (int)MapType.None;
+                        }
+                    }
+                }
+            }
+            
             for (int i = 0; i < roomToMazeData.map.width; i++)
             {
                 for (int j = 0; j < roomToMazeData.map.height; j++)
@@ -73,10 +124,12 @@ namespace _Scripts.Algorithm
                 }
             }
 
-            RunBuildMap(floor, _mazeQueue, dot);
+            
+
+            RunBuildMap(floor, maze, dot);
         }
 
-        private async Task RunBuildMap(HashSet<Vector2Int> floor, Queue<Vector2Int> maze, HashSet<Vector2Int> dot)
+        private async Task RunBuildMap(HashSet<Vector2Int> floor, HashSet<Vector2Int> maze, HashSet<Vector2Int> dot)
         {
             foreach (var room in _listRooms)
             {
@@ -86,13 +139,10 @@ namespace _Scripts.Algorithm
                 }
             }
             tilemapVisualizer.PaintFloorTiles(floor);
-            await tilemapVisualizer.PaintMazeTilesAsync(maze);
-            await tilemapVisualizer.PaintDotTilesAsync(dot);
+            tilemapVisualizer.PaintMazeTiles(maze);
+            tilemapVisualizer.PaintDotTiles(dot);
             
-            RemoveDeadEnds(out var queueRemoveDeadEnds);
-
             await tilemapVisualizer.DeleteDotTilesAsync(dot);
-            await tilemapVisualizer.DeleteFloorTile(queueRemoveDeadEnds);
             
             floor.Clear();
             

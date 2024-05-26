@@ -26,7 +26,7 @@ namespace _Scripts.Algorithm.ConnectRoomsAndCorridors
                             {
                                 if (Random.Range(0, 100) < roomToMazeData.chanceToChangePortal)
                                 {
-                                    logicMap[room.listPortals[iter].x, room.listPortals[iter].y] = (int)MapType.Dot;
+                                    logicMap[room.listPortals[iter].x, room.listPortals[iter].y] = (int)MapType.None;
                                     room.listPortals[iter] = portal;
                                     logicMap[portal.x, portal.y] = (int)MapType.Maze;
                                 }
@@ -50,6 +50,7 @@ namespace _Scripts.Algorithm.ConnectRoomsAndCorridors
                         room.listPortals.Add(portal);
                         room.isConnectted = true;
                         logicMap[portal.x, portal.y] = (int)MapType.Maze;
+                        break;
                     }
                 }
             }

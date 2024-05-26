@@ -56,6 +56,8 @@ namespace _Scripts.Algorithm
         public int distanceBetweenRoom;
         public int distanceBetweenRoomAndPath = 4;
 
+        public int roomResizeOffset;
+
         // Todo Set up data for room
     }
 

@@ -28,8 +28,8 @@ namespace _Scripts.Algorithm.GenerateRoom
                 roomWidth -= 1 - roomWidth % 2;
                 roomHeight -= 1 - roomHeight % 2;
                 
-                var xPos = Random.Range(1, roomToMazeData.map.width - roomWidth - 1);
-                var yPos = Random.Range(1, roomToMazeData.map.height - roomHeight - 1);
+                var xPos = Random.Range(2, roomToMazeData.map.width - roomWidth - 2);
+                var yPos = Random.Range(2, roomToMazeData.map.height - roomHeight - 2);
 
                 xPos -= xPos % 2;
                 yPos -= yPos % 2;

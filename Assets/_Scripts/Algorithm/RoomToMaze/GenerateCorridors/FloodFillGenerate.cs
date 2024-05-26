@@ -17,7 +17,7 @@ namespace _Scripts.Algorithm.GenerateCorridors
             queue.Enqueue((new Vector2Int(startPos.Item1, startPos.Item2), Vector2Int.up));
             _mazeQueue.Enqueue(new Vector2Int(startPos.Item1, startPos.Item2));
 
-            var directions = new [] { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right};
+            var directions = new List<Vector2Int> { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right};
 
             while (queue.Count > 0)
             {
@@ -31,30 +31,24 @@ namespace _Scripts.Algorithm.GenerateCorridors
                     directions.Shuffle();
                     direction = direction == directions[0] ? directions[1] : directions[0];
                 }
-                var neighbor = current.Item1 + direction * 2;
-
-                if (roomToMazeData.IsValidCell(neighbor.x, neighbor.y) && logicMap[neighbor.x, neighbor.y] == (int)MapType.None)
-                {
-                    logicMap[neighbor.x, neighbor.y] = (int)MapType.Maze;
-                    logicMap[neighbor.x - direction.x, neighbor.y - direction.y] = (int)MapType.Maze;
-                    queue.Enqueue((neighbor, direction));
-                    _mazeQueue.Enqueue(new Vector2Int(neighbor.x - direction.x, neighbor.y - direction.y));
-                    _mazeQueue.Enqueue(new Vector2Int(neighbor.x, neighbor.y));
-                }
                 else
                 {
-                    foreach (var dir in directions)
-                    {
-                        var nei = current.Item1 + dir * 2;
+                    // Move to end Point
+                    directions.Remove(direction);
+                    directions.Add(direction);
+                }
+                
+                foreach (var dir in directions)
+                {
+                    var nei = current.Item1 + dir * 2;
 
-                        if (roomToMazeData.IsValidCell(nei.x, nei.y) && logicMap[nei.x, nei.y] == (int)MapType.None)
-                        {
-                            logicMap[nei.x, nei.y] = (int)MapType.Maze;
-                            logicMap[nei.x - dir.x, nei.y - dir.y] = (int)MapType.Maze;
-                            queue.Enqueue((nei, dir));
-                            _mazeQueue.Enqueue(new Vector2Int(nei.x - dir.x, nei.y - dir.y));
-                            _mazeQueue.Enqueue(new Vector2Int(nei.x, nei.y));
-                        }
+                    if (roomToMazeData.IsValidCell(nei.x, nei.y) && logicMap[nei.x, nei.y] == (int)MapType.None)
+                    {
+                        logicMap[nei.x, nei.y] = (int)MapType.Maze;
+                        logicMap[nei.x - dir.x, nei.y - dir.y] = (int)MapType.Maze;
+                        queue.Enqueue((nei, dir));
+                        _mazeQueue.Enqueue(new Vector2Int(nei.x - dir.x, nei.y - dir.y));
+                        _mazeQueue.Enqueue(new Vector2Int(nei.x, nei.y));
                     }
                 }
             }

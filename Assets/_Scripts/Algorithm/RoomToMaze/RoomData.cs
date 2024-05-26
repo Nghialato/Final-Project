@@ -25,8 +25,8 @@ namespace _Scripts.Algorithm
 
         public bool IsValidPortal(int i, int j)
         {
-            var validPos = (i >= roomPos.x && i <= roomPos.x + width) &&
-                           (j >= roomPos.y && j <= roomPos.y + height);
+            var validPos = (i >= roomPos.x + 2 && i <= roomPos.x + width - 2 && (j == roomPos.y || j == roomPos.y + height)) ||
+                           (j >= roomPos.y + 2 && j <= roomPos.y + height - 2 && (i == roomPos.x || i == roomPos.x + width));
                 
             return validPos;
         }

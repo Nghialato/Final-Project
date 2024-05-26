@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using _Scripts.GameEts;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace _Scripts.Algorithm.GenerateCorridors
 {
-    public class DFSGenerate : GeneratorCorridorsAbstract
+    public class DFSGenerateUpdate : GeneratorCorridorsAbstract
     {
+        public int stepCheck;
         public override void Generate(RoomToMazeData roomToMazeData, ref int[,] logicMap, out Queue<Vector2Int> _mazeQueue)
         {
             _mazeQueue = new Queue<Vector2Int>();
@@ -31,7 +31,7 @@ namespace _Scripts.Algorithm.GenerateCorridors
                     while (possibleMoveFromStartPos.Count > 0)
                     {
                         var position = possibleMoveFromStartPos.Dequeue();
-                        var nextStep = position.Item1 + position.Item2;
+                        var nextStep = position.Item1 + position.Item2 * stepCheck;
                         if (roomToMazeData.IsValidCell(nextStep.x, nextStep.y) && logicMap[nextStep.x, nextStep.y] == (int)MapType.None)
                         {
                             queue.Enqueue((position.Item1, position.Item2));
@@ -53,7 +53,7 @@ namespace _Scripts.Algorithm.GenerateCorridors
                 
                 foreach (var dir in directions)
                 {
-                    var check = current.Item1 + dir * 2;
+                    var check = current.Item1 + dir * stepCheck;
 
                     if (roomToMazeData.IsValidCell(check.x, check.y) && logicMap[check.x, check.y] == (int)MapType.None)
                     {
@@ -80,17 +80,18 @@ namespace _Scripts.Algorithm.GenerateCorridors
                 var haveDirectionMove = false;
                 foreach (var dir in directions)
                 {
-                    var neighbor = current.Item1 + dir * 2;
+                    var neighbor = current.Item1 + dir * stepCheck;
 
                     if (roomToMazeData.IsValidCell(neighbor.x, neighbor.y) && logicMap[neighbor.x, neighbor.y] == (int)MapType.None)
                     {
                         if (haveDirectionMove == false)
                         {
-                            logicMap[neighbor.x, neighbor.y] = (int)MapType.Maze;
-                            logicMap[neighbor.x - dir.x, neighbor.y - dir.y] = (int)MapType.Maze;
                             queue.Enqueue((neighbor, dir));
-                            _mazeQueue.Enqueue(new Vector2Int(neighbor.x - dir.x, neighbor.y - dir.y));
-                            _mazeQueue.Enqueue(new Vector2Int(neighbor.x, neighbor.y));
+                            for (int i = stepCheck - 1; i >= 0; i--)
+                            {
+                                logicMap[neighbor.x - dir.x * i, neighbor.y - dir.y * i] = (int)MapType.Maze;
+                                _mazeQueue.Enqueue(new Vector2Int(neighbor.x - dir.x * i, neighbor.y - dir.y * i));
+                            }
                             haveDirectionMove = true;
                             continue;
                         }
