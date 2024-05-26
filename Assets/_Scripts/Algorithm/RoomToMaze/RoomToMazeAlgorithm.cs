@@ -86,8 +86,6 @@ namespace _Scripts.Algorithm
             
             ConnectRooms();
             
-            RemoveDeadEnds();
-
             for (int i = 0; i < roomToMazeData.map.width; i++)
             {
                 for (int j = 0; j < roomToMazeData.map.height; j++)
@@ -109,10 +107,10 @@ namespace _Scripts.Algorithm
                 }
             }
 
-            RunBuildMap(floor, maze, dot);
+            RunBuildMap(floor, _mazeQueue, dot);
         }
 
-        private async Task RunBuildMap(HashSet<Vector2Int> floor, HashSet<Vector2Int> maze, HashSet<Vector2Int> dot)
+        private async Task RunBuildMap(HashSet<Vector2Int> floor, Queue<Vector2Int> maze, HashSet<Vector2Int> dot)
         {
             foreach (var room in _listRooms)
             {
@@ -122,8 +120,13 @@ namespace _Scripts.Algorithm
                 }
             }
             tilemapVisualizer.PaintFloorTiles(floor);
-            tilemapVisualizer.PaintMazeTiles(maze);
+            await tilemapVisualizer.PaintMazeTilesAsync(maze);
             await tilemapVisualizer.PaintDotTilesAsync(dot);
+            
+            RemoveDeadEnds(out var queueRemoveDeadEnds);
+
+            await tilemapVisualizer.DeleteDotTilesAsync(dot);
+            await tilemapVisualizer.DeleteFloorTile(queueRemoveDeadEnds);
         } 
 
         private void SizeMapValidation()
@@ -138,6 +141,8 @@ namespace _Scripts.Algorithm
                 roomToMazeData.map.height++;
             }
         }
+
+        #region Gen Room In Map
 
         private void GenRoomInMap()
         {
@@ -193,6 +198,8 @@ namespace _Scripts.Algorithm
             }
         }
 
+        #endregion
+        
         #region Gen Maze
 
         private void GenMazeInMapFloodFill()
@@ -458,7 +465,7 @@ namespace _Scripts.Algorithm
 
         #region Remove Dead End
 
-        private void RemoveDeadEnds()
+        private void RemoveDeadEnds(out Queue<Vector2Int> queueRemoveDeadEnds)
         {
             for (int i = 0; i < roomToMazeData.map.width; i++)
             {
@@ -487,14 +494,13 @@ namespace _Scripts.Algorithm
             
             
             
-            var queueRemoveDeadEnds = new Queue<Vector2Int>();
+            queueRemoveDeadEnds = new Queue<Vector2Int>();
             while (_deadEnds.Count > 0)
             {
                 var position = _deadEnds.Dequeue();
                 queueRemoveDeadEnds.Enqueue(position);
                 _logicMap[position.x, position.y] = (int)MapType.None;
                 var nextPossibleDeadEnd = position + GetDirDeadEnd(position.x, position.y);
-                if(GetDirDeadEnd(position.x, position.y) == Vector2Int.zero) Debug.Log("-----");
                 if (IsDeadEnd(nextPossibleDeadEnd.x, nextPossibleDeadEnd.y))
                 {
                     _deadEnds.Enqueue(nextPossibleDeadEnd);
@@ -559,7 +565,6 @@ namespace _Scripts.Algorithm
         }
 
         #endregion
-
     }
 
     internal enum MapType

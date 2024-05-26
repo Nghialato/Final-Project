@@ -61,6 +61,16 @@ public class TilemapVisualizer : MonoBehaviour
         await PaintTilesAsync(dotPositions, floorTilemap, dotTile);
     }
 
+    public async Task DeleteFloorTile(IEnumerable<Vector2Int> tilePositions)
+    {
+        await DeleteTilesAsync(tilePositions, floorTilemap);
+    }
+
+    public async Task DeleteDotTilesAsync(IEnumerable<Vector2Int> dotPositions)
+    {
+        await DeleteTilesAsync(dotPositions, floorTilemap);
+    }
+
     private async Task PaintTilesAsync(IEnumerable<Vector2Int> positions, Tilemap tileMap, TileBase tile)
     {
         var pos = positions.GetEnumerator();
@@ -93,7 +103,41 @@ public class TilemapVisualizer : MonoBehaviour
                 PaintSingleTile(tileMap, tile, pos.Current);
             }
         }
-    }    
+    }
+
+    private async Task DeleteTilesAsync(IEnumerable<Vector2Int> positions, Tilemap tileMap)
+    {
+        var pos = positions.GetEnumerator();
+        while (pos.MoveNext())
+        {
+            await Task.Delay(10);
+            DeleteSingleTile(tileMap, pos.Current);
+            if (pos.MoveNext())
+            {
+                DeleteSingleTile(tileMap, pos.Current);
+            }
+            
+            if (pos.MoveNext())
+            {
+                DeleteSingleTile(tileMap, pos.Current);
+            }
+            
+            if (pos.MoveNext())
+            {
+                DeleteSingleTile(tileMap, pos.Current);
+            }
+            
+            if (pos.MoveNext())
+            {
+                DeleteSingleTile(tileMap, pos.Current);
+            }
+            
+            if (pos.MoveNext())
+            {
+                DeleteSingleTile(tileMap, pos.Current);
+            }
+        }
+    }
 
     #endregion
     
@@ -129,6 +173,12 @@ public class TilemapVisualizer : MonoBehaviour
     {
         var tilePosition = tilemap.WorldToCell((Vector3Int)position);
         tilemap.SetTile(tilePosition, tile);
+    }
+
+    private void DeleteSingleTile(Tilemap tilemap, Vector2Int position)
+    {
+        var tilePosition = tilemap.WorldToCell((Vector3Int)position);
+        tilemap.SetTile(tilePosition, null);
     }
 
     public void Clear()
