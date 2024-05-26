@@ -123,9 +123,7 @@ namespace _Scripts.Algorithm
                     }
                 }
             }
-
             
-
             RunBuildMap(floor, maze, dot);
         }
 
@@ -140,10 +138,6 @@ namespace _Scripts.Algorithm
             }
             tilemapVisualizer.PaintFloorTiles(floor);
             tilemapVisualizer.PaintMazeTiles(maze);
-            tilemapVisualizer.PaintDotTiles(dot);
-            
-            await tilemapVisualizer.DeleteDotTilesAsync(dot);
-            
             floor.Clear();
             
             for (int i = 0; i < roomToMazeData.map.width; i++)
