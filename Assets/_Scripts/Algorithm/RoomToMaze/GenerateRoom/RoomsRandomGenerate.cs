@@ -5,7 +5,7 @@ using Random = UnityEngine.Random;
 
 namespace _Scripts.Algorithm.GenerateRoom
 {
-    public class RandomGenerate : GenerateRoomAbstract
+    public class RoomsRandomGenerate : GenerateRoomAbstract
     {
         public override void Generate(RoomToMazeData roomToMazeData, ref int[,] logicMap, out List<RoomData> listRooms)
         {
