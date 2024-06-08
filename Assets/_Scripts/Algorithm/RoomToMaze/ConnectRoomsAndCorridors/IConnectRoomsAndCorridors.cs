@@ -4,6 +4,6 @@ namespace _Scripts.Algorithm.ConnectRoomsAndCorridors
 {
     public interface IConnectRoomsAndCorridors
     {
-        public void Connect(RoomToMazeData roomToMazeData, ref int[,] logicMap, ref List<RoomData> listRooms);
+        public void Connect(MapData mapData, ref int[,] logicMap, ref List<RoomData> listRooms);
     }
 }

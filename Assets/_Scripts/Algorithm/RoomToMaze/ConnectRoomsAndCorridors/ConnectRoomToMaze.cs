@@ -1,13 +1,16 @@
 ﻿using System.Collections.Generic;
+using _Scripts.Algorithm.Data;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace _Scripts.Algorithm.ConnectRoomsAndCorridors
 {
     public class ConnectRoomToMaze : ConnectRoomsToCorridorsAbstract
     {
-        public override void Connect(RoomToMazeData roomToMazeData, ref int[,] logicMap, ref List<RoomData> listRooms)
+        [SerializeField] private ConnectRoomToMazeData connectRoomToMazeData;
+        public override void Connect(MapData mapData, ref int[,] logicMap, ref List<RoomData> listRooms)
         {
-            BuildConnectablePosition(roomToMazeData, ref logicMap, out List<Vector2Int> listPossiblePortals);
+            BuildConnectablePosition(mapData, ref logicMap, out List<Vector2Int> listPossiblePortals);
 
             foreach (var portal in listPossiblePortals)
             {
@@ -24,7 +27,7 @@ namespace _Scripts.Algorithm.ConnectRoomsAndCorridors
                         {
                             if (portal.x == room.listPortals[iter].x || portal.y == room.listPortals[iter].y)
                             {
-                                if (Random.Range(0, 100) < roomToMazeData.chanceToChangePortal)
+                                if (Random.Range(0, 100) < connectRoomToMazeData.chanceToChangePortal)
                                 {
                                     logicMap[room.listPortals[iter].x, room.listPortals[iter].y] = (int)MapType.None;
                                     room.listPortals[iter] = portal;
@@ -37,9 +40,9 @@ namespace _Scripts.Algorithm.ConnectRoomsAndCorridors
                         continue;
                     }
                     
-                    if (room.isConnectted)
+                    if (room.isConnected)
                     {
-                        if (Random.Range(0, 100) < roomToMazeData.imperfectRate)
+                        if (Random.Range(0, 100) < connectRoomToMazeData.imperfectRate)
                         {
                             room.listPortals.Add(portal);
                             logicMap[portal.x, portal.y] = (int)MapType.Maze;
@@ -48,7 +51,7 @@ namespace _Scripts.Algorithm.ConnectRoomsAndCorridors
                     else
                     {
                         room.listPortals.Add(portal);
-                        room.isConnectted = true;
+                        room.isConnected = true;
                         logicMap[portal.x, portal.y] = (int)MapType.Maze;
                         break;
                     }
@@ -56,12 +59,12 @@ namespace _Scripts.Algorithm.ConnectRoomsAndCorridors
             }
         }
 
-        private void BuildConnectablePosition(RoomToMazeData roomToMazeData, ref int[,] logicMap,out List<Vector2Int> listPossiblePortals)
+        private void BuildConnectablePosition(MapData mapData, ref int[,] logicMap,out List<Vector2Int> listPossiblePortals)
         {
             listPossiblePortals = new List<Vector2Int>();
-            for (var i = 1; i < roomToMazeData.map.width - 1; i++)
+            for (var i = 1; i < mapData.mapSize.width - 1; i++)
             {
-                for (var j = 1; j < roomToMazeData.map.height - 1; j++)
+                for (var j = 1; j < mapData.mapSize.height - 1; j++)
                 {
                     if (IsValidConnectPosition(i, j, logicMap))
                     {

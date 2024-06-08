@@ -5,13 +5,14 @@ using _Scripts.Algorithm.ConnectRoomsAndCorridors;
 using _Scripts.Algorithm.GenerateCorridors;
 using _Scripts.Algorithm.GenerateRoom;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace _Scripts.Algorithm
 {
     public class RoomToMazeAlgorithm : AbstractDungeonGenerator
     {
-        public RoomToMazeData roomToMazeData;
+        [FormerlySerializedAs("roomToMazeData")] public MapData mapData;
 
         public GenerateRoomAbstract Room;
         public GeneratorCorridorsAbstract Corridors;
@@ -36,21 +37,21 @@ namespace _Scripts.Algorithm
             
             SizeMapValidation();
             
-            _logicMap = new int[roomToMazeData.map.width, roomToMazeData.map.height];
+            _logicMap = new int[mapData.mapSize.width, mapData.mapSize.height];
             
-            for (var i = 0; i < roomToMazeData.map.width; i++)
+            for (var i = 0; i < mapData.mapSize.width; i++)
             {
-                for (var j = 0; j < roomToMazeData.map.height; j++)
+                for (var j = 0; j < mapData.mapSize.height; j++)
                 {
                     _logicMap[i, j] = (int)MapType.None;
                 }
             }
             
-            Room.Generate(roomToMazeData, ref _logicMap, out _listRooms);
+            Room.Generate(mapData, ref _logicMap, out _listRooms);
             
-            Corridors.Generate(roomToMazeData, ref _logicMap, out _mazeQueue);
+            Corridors.Generate(mapData, ref _logicMap, out _mazeQueue);
             
-            ConnectRoomsAndCorridors.Connect(roomToMazeData, ref _logicMap, ref _listRooms);
+            ConnectRoomsAndCorridors.Connect(mapData, ref _logicMap, ref _listRooms);
             
             RemoveDeadEnds(out var queueRemoveDeadEnds);
             
@@ -91,7 +92,7 @@ namespace _Scripts.Algorithm
 
             foreach (var room in _listRooms)
             {
-                if (room.isConnectted == false)
+                if (room.isConnected == false)
                 {
                     for (var y = room.roomPos.y; y < room.roomPos.y + room.height; y++)
                     {
@@ -103,9 +104,9 @@ namespace _Scripts.Algorithm
                 }
             }
             
-            for (int i = 0; i < roomToMazeData.map.width; i++)
+            for (int i = 0; i < mapData.mapSize.width; i++)
             {
-                for (int j = 0; j < roomToMazeData.map.height; j++)
+                for (int j = 0; j < mapData.mapSize.height; j++)
                 {
                     if (_logicMap[i, j] == (int)MapType.Floor)
                     {
@@ -140,9 +141,9 @@ namespace _Scripts.Algorithm
             tilemapVisualizer.PaintMazeTiles(maze);
             floor.Clear();
             
-            for (int i = 0; i < roomToMazeData.map.width; i++)
+            for (int i = 0; i < mapData.mapSize.width; i++)
             {
-                for (int j = 0; j < roomToMazeData.map.height; j++)
+                for (int j = 0; j < mapData.mapSize.height; j++)
                 {
                     if (_logicMap[i, j] == (int)MapType.Floor)
                     {
@@ -161,14 +162,14 @@ namespace _Scripts.Algorithm
 
         private void SizeMapValidation()
         {
-            if (roomToMazeData.map.width % 2 == 0)
+            if (mapData.mapSize.width % 2 == 0)
             {
-                roomToMazeData.map.width++;
+                mapData.mapSize.width++;
             }
             
-            if (roomToMazeData.map.height % 2 == 0)
+            if (mapData.mapSize.height % 2 == 0)
             {
-                roomToMazeData.map.height++;
+                mapData.mapSize.height++;
             }
         }
 
@@ -176,9 +177,9 @@ namespace _Scripts.Algorithm
 
         private void RemoveDeadEnds(out Queue<Vector2Int> queueRemoveDeadEnds)
         {
-            for (int i = 0; i < roomToMazeData.map.width; i++)
+            for (int i = 0; i < mapData.mapSize.width; i++)
             {
-                for (int j = 0; j < roomToMazeData.map.height; j++)
+                for (int j = 0; j < mapData.mapSize.height; j++)
                 {
                     if (IsDeadEnd(i, j))
                     {
@@ -186,7 +187,7 @@ namespace _Scripts.Algorithm
                         continue;
                     }
 
-                    if (IsTooActivePosition(i, j) && Random.Range(0, 100) < roomToMazeData.removeMazeRate)
+                    if (IsTooActivePosition(i, j) && Random.Range(0, 100) < 50)
                     {
                         _logicMap[i, j] = (int)MapType.None;
                         var direction = new [] { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right};
@@ -224,7 +225,7 @@ namespace _Scripts.Algorithm
             var deadDirection = 0;
             foreach (var dir in direction)
             {
-                if (roomToMazeData.IsValidCell(i + dir.x, j + dir.y))
+                if (mapData.IsValidCell(i + dir.x, j + dir.y))
                 {
                     if (_logicMap[i + dir.x, j + dir.y] == (int)MapType.None || _logicMap[i + dir.x, j + dir.y] == (int)MapType.Dot)
                     {
@@ -244,7 +245,7 @@ namespace _Scripts.Algorithm
             var deadDirection = 0;
             foreach (var dir in direction)
             {
-                if (roomToMazeData.IsValidCell(i + dir.x, j + dir.y))
+                if (mapData.IsValidCell(i + dir.x, j + dir.y))
                 {
                     if (_logicMap[i + dir.x, j + dir.y] == (int)MapType.Maze)
                     {
@@ -264,7 +265,7 @@ namespace _Scripts.Algorithm
 
             foreach (var dir in direction)
             {
-                if(roomToMazeData.IsValidCell(i + dir.x, j + dir.y) == false) continue;
+                if(mapData.IsValidCell(i + dir.x, j + dir.y) == false) continue;
                 if (_logicMap[i + dir.x, j + dir.y] == (int)MapType.None || _logicMap[i + dir.x, j + dir.y] == (int)MapType.Dot) continue;
                 dirReturn = dir;
                 break;

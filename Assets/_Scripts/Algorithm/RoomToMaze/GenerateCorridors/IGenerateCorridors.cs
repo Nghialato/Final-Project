@@ -5,6 +5,6 @@ namespace _Scripts.Algorithm.GenerateCorridors
 {
     public interface IGenerateCorridors
     {
-        public void Generate(RoomToMazeData roomToMazeData, ref int[,] logicMap, out Queue<Vector2Int> _mazeQueue);
+        public void Generate(MapData mapData, ref int[,] logicMap, out Queue<Vector2Int> _mazeQueue);
     }
 }

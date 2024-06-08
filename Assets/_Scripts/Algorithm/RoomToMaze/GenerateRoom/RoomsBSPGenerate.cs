@@ -6,10 +6,10 @@ namespace _Scripts.Algorithm.GenerateRoom
     public class RoomsBSPGenerate : GenerateRoomAbstract
     {
         private Queue<AreaInMap> _listAreas = new ();
-        public override void Generate(RoomToMazeData roomToMazeData, ref int[,] logicMap, out List<RoomData> listRooms)
+        public override void Generate(MapData mapData, ref int[,] logicMap, out List<RoomData> listRooms)
         {
-            SeparateMapArea(roomToMazeData);
-            PlaceRoomsToArea(out listRooms, roomToMazeData.numRoomsRequired);
+            SeparateMapArea(mapData);
+            PlaceRoomsToArea(out listRooms, mapData.numRoomsRequired);
 
             foreach (var room in listRooms)
             {
@@ -67,12 +67,12 @@ namespace _Scripts.Algorithm.GenerateRoom
             }
         }
 
-        private void SeparateMapArea(in RoomToMazeData roomToMazeData)
+        private void SeparateMapArea(in MapData mapData)
         {
-            var initArea = new AreaInMap(2, 2, roomToMazeData.map.width - 2, roomToMazeData.map.height - 2);
+            var initArea = new AreaInMap(2, 2, mapData.mapSize.width - 2, mapData.mapSize.height - 2);
             _listAreas.Clear();
             _listAreas.Enqueue(initArea);
-            var numRoomsRequired = roomToMazeData.numRoomsRequired;
+            var numRoomsRequired = mapData.numRoomsRequired;
             var timesSeparate = 2;
             while (numRoomsRequired / 2 != 0)
             {

@@ -5,6 +5,6 @@ namespace _Scripts.Algorithm.GenerateRoom
 {
     public interface IGenerateRoom
     {
-        public void Generate(RoomToMazeData roomToMazeData, ref int[,] logicMap, out List<RoomData> listRooms);
+        public void Generate(MapData mapData, ref int[,] logicMap, out List<RoomData> listRooms);
     }
 }

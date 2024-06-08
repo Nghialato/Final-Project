@@ -1,21 +1,24 @@
 ﻿using System.Collections.Generic;
+using _Scripts.Algorithm.Data;
 using _Scripts.GameEts;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace _Scripts.Algorithm.GenerateCorridors
 {
     public class FloodFillGenerate : GeneratorCorridorsAbstract
     {
-        public override void Generate(RoomToMazeData roomToMazeData, ref int[,] logicMap, out Queue<Vector2Int> _mazeQueue)
+        [SerializeField] private FloodFillGenerateData floodFillGenerateData;
+        public override void Generate(MapData mapData, ref int[,] logicMap, out Queue<Vector2Int> mazeQueue)
         {
-            var startPos = roomToMazeData.PickStartPos(logicMap);
-            _mazeQueue = new Queue<Vector2Int>();
+            var startPos = mapData.PickStartPos(logicMap);
+            mazeQueue = new Queue<Vector2Int>();
 
             logicMap[startPos.Item1, startPos.Item2] = (int)MapType.Maze;
 
             var queue = new Queue<(Vector2Int, Vector2Int)>();
             queue.Enqueue((new Vector2Int(startPos.Item1, startPos.Item2), Vector2Int.up));
-            _mazeQueue.Enqueue(new Vector2Int(startPos.Item1, startPos.Item2));
+            mazeQueue.Enqueue(new Vector2Int(startPos.Item1, startPos.Item2));
 
             var directions = new List<Vector2Int> { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right};
 
@@ -25,7 +28,7 @@ namespace _Scripts.Algorithm.GenerateCorridors
 
                 var direction = current.Item2;
                 
-                if(Random.Range(0, 100) < roomToMazeData.percentChangeDirection) 
+                if(Random.Range(0, 100) < floodFillGenerateData.percentChangeDirection) 
                 {
                     // Change Direction
                     directions.Shuffle();
@@ -42,13 +45,13 @@ namespace _Scripts.Algorithm.GenerateCorridors
                 {
                     var nei = current.Item1 + dir * 2;
 
-                    if (roomToMazeData.IsValidCell(nei.x, nei.y) && logicMap[nei.x, nei.y] == (int)MapType.None)
+                    if (mapData.IsValidCell(nei.x, nei.y) && logicMap[nei.x, nei.y] == (int)MapType.None)
                     {
                         logicMap[nei.x, nei.y] = (int)MapType.Maze;
                         logicMap[nei.x - dir.x, nei.y - dir.y] = (int)MapType.Maze;
                         queue.Enqueue((nei, dir));
-                        _mazeQueue.Enqueue(new Vector2Int(nei.x - dir.x, nei.y - dir.y));
-                        _mazeQueue.Enqueue(new Vector2Int(nei.x, nei.y));
+                        mazeQueue.Enqueue(new Vector2Int(nei.x - dir.x, nei.y - dir.y));
+                        mazeQueue.Enqueue(new Vector2Int(nei.x, nei.y));
                     }
                 }
             }

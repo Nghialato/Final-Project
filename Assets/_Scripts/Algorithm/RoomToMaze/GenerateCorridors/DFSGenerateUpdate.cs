@@ -7,12 +7,12 @@ namespace _Scripts.Algorithm.GenerateCorridors
     public class DFSGenerateUpdate : GeneratorCorridorsAbstract
     {
         public int stepCheck;
-        public override void Generate(RoomToMazeData roomToMazeData, ref int[,] logicMap, out Queue<Vector2Int> _mazeQueue)
+        public override void Generate(MapData mapData, ref int[,] logicMap, out Queue<Vector2Int> _mazeQueue)
         {
             _mazeQueue = new Queue<Vector2Int>();
             var percentChangeDirection = 40;
 
-            var startPos = roomToMazeData.PickStartPos(logicMap);
+            var startPos = mapData.PickStartPos(logicMap);
 
             logicMap[startPos.Item1, startPos.Item2] = (int)MapType.Maze;
 
@@ -32,7 +32,7 @@ namespace _Scripts.Algorithm.GenerateCorridors
                     {
                         var position = possibleMoveFromStartPos.Dequeue();
                         var nextStep = position.Item1 + position.Item2 * stepCheck;
-                        if (roomToMazeData.IsValidCell(nextStep.x, nextStep.y) && logicMap[nextStep.x, nextStep.y] == (int)MapType.None)
+                        if (mapData.IsValidCell(nextStep.x, nextStep.y) && logicMap[nextStep.x, nextStep.y] == (int)MapType.None)
                         {
                             queue.Enqueue((position.Item1, position.Item2));
                             while (possibleMoveFromStartPos.Peek().Item1 == position.Item1)
@@ -55,7 +55,7 @@ namespace _Scripts.Algorithm.GenerateCorridors
                 {
                     var check = current.Item1 + dir * stepCheck;
 
-                    if (roomToMazeData.IsValidCell(check.x, check.y) && logicMap[check.x, check.y] == (int)MapType.None)
+                    if (mapData.IsValidCell(check.x, check.y) && logicMap[check.x, check.y] == (int)MapType.None)
                     {
                         possibleMoveFromStartPos.Enqueue((current.Item1, dir));
                     }
@@ -82,7 +82,7 @@ namespace _Scripts.Algorithm.GenerateCorridors
                 {
                     var neighbor = current.Item1 + dir * stepCheck;
 
-                    if (roomToMazeData.IsValidCell(neighbor.x, neighbor.y) && logicMap[neighbor.x, neighbor.y] == (int)MapType.None)
+                    if (mapData.IsValidCell(neighbor.x, neighbor.y) && logicMap[neighbor.x, neighbor.y] == (int)MapType.None)
                     {
                         if (haveDirectionMove == false)
                         {
