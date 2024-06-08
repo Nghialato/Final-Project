@@ -41,7 +41,7 @@ namespace _Scripts.Algorithm.GenerateRoom
                 }
                 if (!roomFits) continue;
                 
-                // Add room in list
+                // Add room in list and mark in Logic Map
                 numRooms++;
                 listRooms.Add(new RoomData(numRooms, new Vector2Int(xPos, yPos), roomWidth, roomHeight));
                 for (var y = yPos; y < yPos + roomHeight; y++)
