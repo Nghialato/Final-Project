@@ -31,10 +31,16 @@ namespace _Scripts.Algorithm
             var roomPos = roomData.roomPos;
             var width = roomData.width;
             var height = roomData.height;
-            var validPos = (i >= roomPos.x + 2 && i <= roomPos.x + width - 2 && (j == roomPos.y || j == roomPos.y + height)) ||
+            return (i >= roomPos.x + 2 && i <= roomPos.x + width - 2 && (j == roomPos.y || j == roomPos.y + height)) ||
                            (j >= roomPos.y + 2 && j <= roomPos.y + height - 2 && (i == roomPos.x || i == roomPos.x + width));
-                
-            return validPos;
+        }
+
+        public static bool IsInside(this RoomData roomData, int i, int j)
+        {
+            var roomPos = roomData.roomPos;
+            var width = roomData.width;
+            var height = roomData.height;
+            return i >= roomPos.x && i < roomPos.x + width && j >= roomPos.y && j < roomPos.y + height;
         }
 
         public static bool IsHadPortalSameSide(this RoomData roomData, int i, int j)
@@ -49,6 +55,11 @@ namespace _Scripts.Algorithm
             }
 
             return false;
+        }
+
+        public static Vector2Int GetCenter(this RoomData roomData)
+        {
+            return roomData.roomPos + new Vector2Int(roomData.width / 2, roomData.height / 2);
         }
     }
 }

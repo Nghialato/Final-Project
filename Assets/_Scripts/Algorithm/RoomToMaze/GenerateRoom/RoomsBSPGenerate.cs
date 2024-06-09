@@ -1,16 +1,20 @@
 ﻿using System.Collections.Generic;
+using _Scripts.Algorithm.Data;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace _Scripts.Algorithm.GenerateRoom
 {
     public class RoomsBSPGenerate : GenerateRoomAbstract
     {
-        private Queue<AreaInMap> _listAreas = new ();
+        private Queue<AreaInMap> _queueAreas = new ();
+        [SerializeField] private RoomBSPGenerateData roomBspGenerateData;
         public override void Generate(MapData mapData, ref int[,] logicMap, out List<RoomData> listRooms)
         {
-            SeparateMapArea(mapData);
+            SeparateMapArea(mapData, roomBspGenerateData.percentSplitHorizontal);
             PlaceRoomsToArea(out listRooms, mapData.numRoomsRequired);
-
+            
+            // Place room in Logic Map.
             foreach (var room in listRooms)
             {
                 for (var y = room.roomPos.y; y < room.roomPos.y + room.height; y++)
@@ -39,20 +43,20 @@ namespace _Scripts.Algorithm.GenerateRoom
                 this.height = height;
             }
 
-            public void RandomSeparate(out AreaInMap area1, out AreaInMap area2)
+            public void RandomSeparate(out AreaInMap area1, out AreaInMap area2, int rateSeparateHorizontal)
             {
                 var rate = Random.Range(0, 100);
 
                 if (width > height * 2)
                 {
-                    rate = 25;
+                    rate = rateSeparateHorizontal * 2;
                 } else if (height > width * 2)
                 {
-                    rate = 75;
+                    rate = rateSeparateHorizontal / 2;
                 }
                 
                 // Random Separate by Horizontal or Vertical
-                if (rate > 50)
+                if (rate < rateSeparateHorizontal)
                 {
                     // Separate by horizontal
                     area1 = new AreaInMap(posX, posY, width, height / 2);
@@ -67,11 +71,11 @@ namespace _Scripts.Algorithm.GenerateRoom
             }
         }
 
-        private void SeparateMapArea(in MapData mapData)
+        private void SeparateMapArea(in MapData mapData, int percentSplitHorizontal)
         {
             var initArea = new AreaInMap(2, 2, mapData.mapSize.width - 2, mapData.mapSize.height - 2);
-            _listAreas.Clear();
-            _listAreas.Enqueue(initArea);
+            _queueAreas.Clear();
+            _queueAreas.Enqueue(initArea);
             var numRoomsRequired = mapData.numRoomsRequired;
             var timesSeparate = 2;
             while (numRoomsRequired / 2 != 0)
@@ -82,10 +86,10 @@ namespace _Scripts.Algorithm.GenerateRoom
             
             while (timesSeparate-- != 1)
             {
-                var area = _listAreas.Dequeue();
-                area.RandomSeparate(out var area1, out var area2);
-                _listAreas.Enqueue(area1);
-                _listAreas.Enqueue(area2);
+                var area = _queueAreas.Dequeue();
+                area.RandomSeparate(out var area1, out var area2, percentSplitHorizontal);
+                _queueAreas.Enqueue(area1);
+                _queueAreas.Enqueue(area2);
             }
             
         }
@@ -93,7 +97,7 @@ namespace _Scripts.Algorithm.GenerateRoom
         private void PlaceRoomsToArea(out List<RoomData> listRooms, int numRoomsRequired)
         {
             listRooms = new List<RoomData>();
-            var listAreas = _listAreas.ToArray();
+            var listAreas = _queueAreas.ToArray();      
             var countArea = listAreas.Length;
 
             while (numRoomsRequired-- != 0)
@@ -130,7 +134,6 @@ namespace _Scripts.Algorithm.GenerateRoom
                 listAreas[idRoom].isUsed = true;
                 listRooms.Add(roomNew);
             }
-            
         }
     }
 }

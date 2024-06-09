@@ -7,7 +7,7 @@ namespace _Scripts.Algorithm.GenerateCorridors
 {
     public class DFSGenerate : GeneratorCorridorsAbstract
     {
-        public override void Generate(MapData mapData, ref int[,] logicMap, out Queue<Vector2Int> _mazeQueue)
+        public override void Generate(MapData mapData, ref int[,] logicMap, in List<RoomData> listRoom, out Queue<Vector2Int> _mazeQueue)
         {
             _mazeQueue = new Queue<Vector2Int>();
             var percentChangeDirection = 40;

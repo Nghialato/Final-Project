@@ -86,7 +86,7 @@ namespace _Scripts.Algorithm.ConnectRoomsAndCorridors
                 (logicMap[x - 1, y] == (int)MapType.Maze &&
                  logicMap[x + 1, y ] == (int)MapType.Floor))
             {
-                return true;
+                return logicMap[x, y] == (int)MapType.None;
             }
 
             return false;

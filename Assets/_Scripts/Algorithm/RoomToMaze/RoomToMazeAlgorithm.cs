@@ -1,18 +1,15 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using _Scripts.Algorithm.ConnectRoomsAndCorridors;
 using _Scripts.Algorithm.GenerateCorridors;
 using _Scripts.Algorithm.GenerateRoom;
 using UnityEngine;
-using UnityEngine.Serialization;
-using Random = UnityEngine.Random;
 
 namespace _Scripts.Algorithm
 {
     public class RoomToMazeAlgorithm : AbstractDungeonGenerator
     {
-        [FormerlySerializedAs("roomToMazeData")] public MapData mapData;
+        public MapData mapData;
 
         public GenerateRoomAbstract Room;
         public GeneratorCorridorsAbstract Corridors;
@@ -49,60 +46,60 @@ namespace _Scripts.Algorithm
             
             Room.Generate(mapData, ref _logicMap, out _listRooms);
             
-            Corridors.Generate(mapData, ref _logicMap, out _mazeQueue);
+            Corridors.Generate(mapData, ref _logicMap, _listRooms, out _mazeQueue);
             
             ConnectRoomsAndCorridors.Connect(mapData, ref _logicMap, ref _listRooms);
             
             RemoveDeadEnds(out var queueRemoveDeadEnds);
             
-            foreach (var room in _listRooms)
-            {
-                for (int i = 0; i < room.width; i++)
-                {
-                    _logicMap[room.roomPos.x + i, room.roomPos.y] = (int)MapType.None;
-                    if (_logicMap[room.roomPos.x + i, room.roomPos.y - 1] == (int)MapType.Maze)
-                    {
-                        _logicMap[room.roomPos.x + i, room.roomPos.y] = (int)MapType.Maze;
-                    }
-                    
-                    _logicMap[room.roomPos.x + i, room.roomPos.y + room.height - 1] = (int)MapType.None;
-                    if (_logicMap[room.roomPos.x + i, room.roomPos.y + room.height] == (int)MapType.Maze)
-                    {
-                        _logicMap[room.roomPos.x + i, room.roomPos.y + room.height - 1] = (int)MapType.Maze;
-                    }
-                }
-                
-                for (int i = 0; i < room.height; i++)
-                {
-                    _logicMap[room.roomPos.x, room.roomPos.y + i] = (int)MapType.None;
-                    if (_logicMap[room.roomPos.x - 1, room.roomPos.y + i] == (int)MapType.Maze)
-                    {
-                        _logicMap[room.roomPos.x, room.roomPos.y + i] = (int)MapType.Maze;
-                    }
-                    
-                    _logicMap[room.roomPos.x + room.width - 1, room.roomPos.y + i] = (int)MapType.None;
-                    if (_logicMap[room.roomPos.x + room.width, room.roomPos.y + i] == (int)MapType.Maze)
-                    {
-                        _logicMap[room.roomPos.x + room.width - 1, room.roomPos.y + i] = (int)MapType.Maze;
-                    }
-                }
-            }
+            // foreach (var room in _listRooms)
+            // {
+            //     for (int i = 0; i < room.width; i++)
+            //     {
+            //         _logicMap[room.roomPos.x + i, room.roomPos.y] = (int)MapType.None;
+            //         if (_logicMap[room.roomPos.x + i, room.roomPos.y - 1] == (int)MapType.Maze)
+            //         {
+            //             _logicMap[room.roomPos.x + i, room.roomPos.y] = (int)MapType.Maze;
+            //         }
+            //         
+            //         _logicMap[room.roomPos.x + i, room.roomPos.y + room.height - 1] = (int)MapType.None;
+            //         if (_logicMap[room.roomPos.x + i, room.roomPos.y + room.height] == (int)MapType.Maze)
+            //         {
+            //             _logicMap[room.roomPos.x + i, room.roomPos.y + room.height - 1] = (int)MapType.Maze;
+            //         }
+            //     }
+            //     
+            //     for (int i = 0; i < room.height; i++)
+            //     {
+            //         _logicMap[room.roomPos.x, room.roomPos.y + i] = (int)MapType.None;
+            //         if (_logicMap[room.roomPos.x - 1, room.roomPos.y + i] == (int)MapType.Maze)
+            //         {
+            //             _logicMap[room.roomPos.x, room.roomPos.y + i] = (int)MapType.Maze;
+            //         }
+            //         
+            //         _logicMap[room.roomPos.x + room.width - 1, room.roomPos.y + i] = (int)MapType.None;
+            //         if (_logicMap[room.roomPos.x + room.width, room.roomPos.y + i] == (int)MapType.Maze)
+            //         {
+            //             _logicMap[room.roomPos.x + room.width - 1, room.roomPos.y + i] = (int)MapType.Maze;
+            //         }
+            //     }
+            // }
             
-            RemoveDeadEnds(out var queueRemoveDead);
-
-            foreach (var room in _listRooms)
-            {
-                if (room.isConnected == false)
-                {
-                    for (var y = room.roomPos.y; y < room.roomPos.y + room.height; y++)
-                    {
-                        for (var x = room.roomPos.x; x < room.roomPos.x + room.width; x++)
-                        {
-                            _logicMap[x, y] = (int)MapType.None;
-                        }
-                    }
-                }
-            }
+            // RemoveDeadEnds(out var queueRemoveDead);
+            //
+            // foreach (var room in _listRooms)
+            // {
+            //     if (room.isConnected == false)
+            //     {
+            //         for (var y = room.roomPos.y; y < room.roomPos.y + room.height; y++)
+            //         {
+            //             for (var x = room.roomPos.x; x < room.roomPos.x + room.width; x++)
+            //             {
+            //                 _logicMap[x, y] = (int)MapType.None;
+            //             }
+            //         }
+            //     }
+            // }
             
             for (int i = 0; i < mapData.mapSize.width; i++)
             {
@@ -157,7 +154,7 @@ namespace _Scripts.Algorithm
                 }
             }
             
-            WallGenerator.CreateWalls(floor, tilemapVisualizer);
+            // WallGenerator.CreateWalls(floor, tilemapVisualizer);
         } 
 
         private void SizeMapValidation()
@@ -187,18 +184,18 @@ namespace _Scripts.Algorithm
                         continue;
                     }
 
-                    if (IsTooActivePosition(i, j) && Random.Range(0, 100) < 50)
-                    {
-                        _logicMap[i, j] = (int)MapType.None;
-                        var direction = new [] { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right};
-                        foreach (var dir in direction)
-                        {
-                            if (IsDeadEnd(i + dir.x, j + dir.y))
-                            {
-                                _deadEnds.Enqueue(new Vector2Int(i + dir.x, j + dir.y));
-                            }
-                        }
-                    }
+                    // if (IsTooActivePosition(i, j) && Random.Range(0, 100) < 10)
+                    // {
+                    //     _logicMap[i, j] = (int)MapType.None;
+                    //     var direction = new [] { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right};
+                    //     foreach (var dir in direction)
+                    //     {
+                    //         if (IsDeadEnd(i + dir.x, j + dir.y))
+                    //         {
+                    //             _deadEnds.Enqueue(new Vector2Int(i + dir.x, j + dir.y));
+                    //         }
+                    //     }
+                    // }
                 }
             }
             

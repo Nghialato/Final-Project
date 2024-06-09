@@ -9,7 +9,7 @@ namespace _Scripts.Algorithm.GenerateCorridors
     public class FloodFillGenerate : GeneratorCorridorsAbstract
     {
         [SerializeField] private FloodFillGenerateData floodFillGenerateData;
-        public override void Generate(MapData mapData, ref int[,] logicMap, out Queue<Vector2Int> mazeQueue)
+        public override void Generate(MapData mapData, ref int[,] logicMap, in List<RoomData> listRoom, out Queue<Vector2Int> mazeQueue)
         {
             var startPos = mapData.PickStartPos(logicMap);
             mazeQueue = new Queue<Vector2Int>();
