@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using _Scripts.Algorithm.ConnectRoomsAndCorridors;
@@ -11,8 +12,11 @@ namespace _Scripts.Algorithm
     {
         public MapData mapData;
 
-        public GenerateRoomAbstract Room;
-        public GeneratorCorridorsAbstract Corridors;
+        public List<GenerateRoomAbstract> RoomGenerates;
+        public List<GeneratorCorridorsAbstract> CorridorsGenerates;
+
+        private GenerateRoomAbstract Room;
+        private GeneratorCorridorsAbstract Corridors;
         public ConnectRoomsToCorridorsAbstract ConnectRoomsAndCorridors;
         public RemoveDeadEnds RemoveDeadEnd; 
 
@@ -22,7 +26,13 @@ namespace _Scripts.Algorithm
 
         [SerializeField] private List<RoomData> _listRooms = new();
         private Queue<Vector2Int> _deadEnds;
-        
+
+        private void Start()
+        {
+            SelectRoomGenerateAlgorithm(0);
+            SelectCorridorsGenerateAlgorithm(0);
+        }
+
         protected override void RunProceduralGeneration()
         {
             HashSet<Vector2Int> floor = new();
@@ -52,54 +62,19 @@ namespace _Scripts.Algorithm
             
             RemoveDeadEnds(out var queueRemoveDeadEnds);
             
-            // foreach (var room in _listRooms)
-            // {
-            //     for (int i = 0; i < room.width; i++)
-            //     {
-            //         _logicMap[room.roomPos.x + i, room.roomPos.y] = (int)MapType.None;
-            //         if (_logicMap[room.roomPos.x + i, room.roomPos.y - 1] == (int)MapType.Maze)
-            //         {
-            //             _logicMap[room.roomPos.x + i, room.roomPos.y] = (int)MapType.Maze;
-            //         }
-            //         
-            //         _logicMap[room.roomPos.x + i, room.roomPos.y + room.height - 1] = (int)MapType.None;
-            //         if (_logicMap[room.roomPos.x + i, room.roomPos.y + room.height] == (int)MapType.Maze)
-            //         {
-            //             _logicMap[room.roomPos.x + i, room.roomPos.y + room.height - 1] = (int)MapType.Maze;
-            //         }
-            //     }
-            //     
-            //     for (int i = 0; i < room.height; i++)
-            //     {
-            //         _logicMap[room.roomPos.x, room.roomPos.y + i] = (int)MapType.None;
-            //         if (_logicMap[room.roomPos.x - 1, room.roomPos.y + i] == (int)MapType.Maze)
-            //         {
-            //             _logicMap[room.roomPos.x, room.roomPos.y + i] = (int)MapType.Maze;
-            //         }
-            //         
-            //         _logicMap[room.roomPos.x + room.width - 1, room.roomPos.y + i] = (int)MapType.None;
-            //         if (_logicMap[room.roomPos.x + room.width, room.roomPos.y + i] == (int)MapType.Maze)
-            //         {
-            //             _logicMap[room.roomPos.x + room.width - 1, room.roomPos.y + i] = (int)MapType.Maze;
-            //         }
-            //     }
-            // }
-            
-            // RemoveDeadEnds(out var queueRemoveDead);
-            //
-            // foreach (var room in _listRooms)
-            // {
-            //     if (room.isConnected == false)
-            //     {
-            //         for (var y = room.roomPos.y; y < room.roomPos.y + room.height; y++)
-            //         {
-            //             for (var x = room.roomPos.x; x < room.roomPos.x + room.width; x++)
-            //             {
-            //                 _logicMap[x, y] = (int)MapType.None;
-            //             }
-            //         }
-            //     }
-            // }
+            foreach (var room in _listRooms)
+            {
+                if (room.isConnected == false)
+                {
+                    for (var y = room.roomPos.y; y < room.roomPos.y + room.height; y++)
+                    {
+                        for (var x = room.roomPos.x; x < room.roomPos.x + room.width; x++)
+                        {
+                            _logicMap[x, y] = (int)MapType.None;
+                        }
+                    }
+                }
+            }
             
             for (int i = 0; i < mapData.mapSize.width; i++)
             {
@@ -154,7 +129,7 @@ namespace _Scripts.Algorithm
                 }
             }
             
-            // WallGenerator.CreateWalls(floor, tilemapVisualizer);
+            WallGenerator.CreateWalls(floor, tilemapVisualizer);
         } 
 
         private void SizeMapValidation()
@@ -272,6 +247,17 @@ namespace _Scripts.Algorithm
         }
 
         #endregion
+
+        public void SelectRoomGenerateAlgorithm(int indexAlgorithm)
+        {
+            Room = RoomGenerates[indexAlgorithm];
+        }
+        
+        public void SelectCorridorsGenerateAlgorithm(int indexAlgorithm)
+        {
+            Corridors = CorridorsGenerates[indexAlgorithm];
+        }
+        
     }
 
     internal enum MapType

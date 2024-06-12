@@ -57,7 +57,8 @@ namespace _Scripts.Algorithm.GenerateRoom
         private void GetRangeRoomSize(in MapData mapData, out int minRoomSize, out int maxRoomSize)
         {
             var averageAreaRoom =
-                mapData.mapSize.width * mapData.mapSize.height * mapData.percentFillMap / mapData.numRoomsRequired;
+                mapData.mapSize.width * mapData.mapSize.height * randomRoomData.percentFillMap /
+                (mapData.numRoomsRequired * 100);
 
             var averageSize = (int)Mathf.Sqrt(averageAreaRoom);
 

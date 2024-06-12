@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using _Scripts.Algorithm.Data;
 using _Scripts.GameEts;
 using UnityEngine;
 
@@ -6,11 +7,11 @@ namespace _Scripts.Algorithm.GenerateCorridors
 {
     public class DFSGenerateUpdate : GeneratorCorridorsAbstract
     {
-        public int stepCheck;
+        [SerializeField] private FloodFillGenerateData floodFillGenerateData;
+
         public override void Generate(MapData mapData, ref int[,] logicMap, in List<RoomData> listRoom, out Queue<Vector2Int> _mazeQueue)
         {
             _mazeQueue = new Queue<Vector2Int>();
-            var percentChangeDirection = 40;
 
             var startPos = mapData.PickStartPos(logicMap);
 
@@ -31,7 +32,7 @@ namespace _Scripts.Algorithm.GenerateCorridors
                     while (possibleMoveFromStartPos.Count > 0)
                     {
                         var position = possibleMoveFromStartPos.Dequeue();
-                        var nextStep = position.Item1 + position.Item2 * stepCheck;
+                        var nextStep = position.Item1 + position.Item2 * floodFillGenerateData.stepMove;
                         if (mapData.IsValidCell(nextStep.x, nextStep.y) && logicMap[nextStep.x, nextStep.y] == (int)MapType.None)
                         {
                             queue.Enqueue((position.Item1, position.Item2));
@@ -53,7 +54,7 @@ namespace _Scripts.Algorithm.GenerateCorridors
                 
                 foreach (var dir in directions)
                 {
-                    var check = current.Item1 + dir * stepCheck;
+                    var check = current.Item1 + dir * floodFillGenerateData.stepMove;
 
                     if (mapData.IsValidCell(check.x, check.y) && logicMap[check.x, check.y] == (int)MapType.None)
                     {
@@ -61,7 +62,7 @@ namespace _Scripts.Algorithm.GenerateCorridors
                     }
                 }
                 
-                if(Random.Range(0, 100) < percentChangeDirection) 
+                if(Random.Range(0, 100) < floodFillGenerateData.percentChangeDirection) 
                 {
                     // Change Direction
                     directions.Shuffle();
@@ -77,22 +78,22 @@ namespace _Scripts.Algorithm.GenerateCorridors
                     directions.Reverse();
                 }
                 
-                var haveDirectionMove = false;
+                var foundDirectionMove = false;
                 foreach (var dir in directions)
                 {
-                    var neighbor = current.Item1 + dir * stepCheck;
+                    var neighbor = current.Item1 + dir * floodFillGenerateData.stepMove;
 
                     if (mapData.IsValidCell(neighbor.x, neighbor.y) && logicMap[neighbor.x, neighbor.y] == (int)MapType.None)
                     {
-                        if (haveDirectionMove == false)
+                        if (foundDirectionMove == false)
                         {
                             queue.Enqueue((neighbor, dir));
-                            for (int i = stepCheck - 1; i >= 0; i--)
+                            for (int i = floodFillGenerateData.stepMove - 1; i >= 0; i--)
                             {
                                 logicMap[neighbor.x - dir.x * i, neighbor.y - dir.y * i] = (int)MapType.Maze;
                                 _mazeQueue.Enqueue(new Vector2Int(neighbor.x - dir.x * i, neighbor.y - dir.y * i));
                             }
-                            haveDirectionMove = true;
+                            foundDirectionMove = true;
                             continue;
                         }
                         possibleMoveFromStartPos.Enqueue((current.Item1, dir));

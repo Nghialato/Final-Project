@@ -1,67 +1,35 @@
 ﻿using System.Collections.Generic;
+using _Scripts.Algorithm.Data;
 using _Scripts.GameEts;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace _Scripts.Algorithm.GenerateCorridors
 {
     public class DFSGenerate : GeneratorCorridorsAbstract
     {
+        [SerializeField] private FloodFillGenerateData floodFillGenerateData;
         public override void Generate(MapData mapData, ref int[,] logicMap, in List<RoomData> listRoom, out Queue<Vector2Int> _mazeQueue)
         {
             _mazeQueue = new Queue<Vector2Int>();
-            var percentChangeDirection = 40;
-
             var startPos = mapData.PickStartPos(logicMap);
 
             logicMap[startPos.Item1, startPos.Item2] = (int)MapType.Maze;
 
-            var queue = new Queue<(Vector2Int, Vector2Int)>();
-            queue.Enqueue((new Vector2Int(startPos.Item1, startPos.Item2), Vector2Int.up));
+            var queuePosition = new Queue<(Vector2Int, Vector2Int)>();
+            queuePosition.Enqueue((new Vector2Int(startPos.Item1, startPos.Item2), Vector2Int.up));
             _mazeQueue.Enqueue(new Vector2Int(startPos.Item1, startPos.Item2));
 
             var directions = new List<Vector2Int> { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right};
-
-            var possibleMoveFromStartPos = new Queue<(Vector2Int, Vector2Int)>();
-
-            while (queue.Count > 0 || possibleMoveFromStartPos.Count > 0)
+            
+            while (queuePosition.Count > 0)
             {
-                if (queue.Count == 0)
-                {
-                    while (possibleMoveFromStartPos.Count > 0)
-                    {
-                        var position = possibleMoveFromStartPos.Dequeue();
-                        var nextStep = position.Item1 + position.Item2;
-                        if (mapData.IsValidCell(nextStep.x, nextStep.y) && logicMap[nextStep.x, nextStep.y] == (int)MapType.None)
-                        {
-                            queue.Enqueue((position.Item1, position.Item2));
-                            while (possibleMoveFromStartPos.Peek().Item1 == position.Item1)
-                            {
-                                possibleMoveFromStartPos.Dequeue();
-                            }
-                            break;
-                        }
-                    }
+                // Get position and direction
+                var (position, direction) = queuePosition.Dequeue();
 
-                    if (possibleMoveFromStartPos.Count == 0) break;
-                }
-                var current = queue.Dequeue();
-
-                var direction = current.Item2;
-                
-                // Add Possible Move
-                
-                foreach (var dir in directions)
-                {
-                    var check = current.Item1 + dir * 2;
-
-                    if (mapData.IsValidCell(check.x, check.y) && logicMap[check.x, check.y] == (int)MapType.None)
-                    {
-                        possibleMoveFromStartPos.Enqueue((current.Item1, dir));
-                    }
-                }
-                
-                if(Random.Range(0, 100) < percentChangeDirection) 
+                // Calculate Direction
+                if(Random.Range(0, 100) < floodFillGenerateData.percentChangeDirection) 
                 {
                     // Change Direction
                     directions.Shuffle();
@@ -71,30 +39,25 @@ namespace _Scripts.Algorithm.GenerateCorridors
                     }
                 } else
                 {
-                    // Move to end Point
+                    // Keep Direction
                     directions.Remove(direction);
                     directions.Add(direction);
                     directions.Reverse();
                 }
                 
-                var haveDirectionMove = false;
+                // Check Next Point
                 foreach (var dir in directions)
                 {
-                    var neighbor = current.Item1 + dir * 2;
+                    var nextPoint = position + dir * 2;
 
-                    if (mapData.IsValidCell(neighbor.x, neighbor.y) && logicMap[neighbor.x, neighbor.y] == (int)MapType.None)
+                    if (mapData.IsValidCell(nextPoint.x, nextPoint.y) && logicMap[nextPoint.x, nextPoint.y] == (int)MapType.None)
                     {
-                        if (haveDirectionMove == false)
-                        {
-                            logicMap[neighbor.x, neighbor.y] = (int)MapType.Maze;
-                            logicMap[neighbor.x - dir.x, neighbor.y - dir.y] = (int)MapType.Maze;
-                            queue.Enqueue((neighbor, dir));
-                            _mazeQueue.Enqueue(new Vector2Int(neighbor.x - dir.x, neighbor.y - dir.y));
-                            _mazeQueue.Enqueue(new Vector2Int(neighbor.x, neighbor.y));
-                            haveDirectionMove = true;
-                            continue;
-                        }
-                        possibleMoveFromStartPos.Enqueue((current.Item1, dir));
+                        logicMap[nextPoint.x, nextPoint.y] = (int)MapType.Maze;
+                        logicMap[nextPoint.x - dir.x, nextPoint.y - dir.y] = (int)MapType.Maze;
+                        queuePosition.Enqueue((nextPoint, dir));
+                        _mazeQueue.Enqueue(new Vector2Int(nextPoint.x - dir.x, nextPoint.y - dir.y));
+                        _mazeQueue.Enqueue(new Vector2Int(nextPoint.x, nextPoint.y));
+                        break;
                     }
                 }
             }

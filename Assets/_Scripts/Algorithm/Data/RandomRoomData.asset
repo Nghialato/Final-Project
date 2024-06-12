@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: RandomRoomData
   m_EditorClassIdentifier: 
   numRoomsTriesInit: 100
+  percentFillMap: 29

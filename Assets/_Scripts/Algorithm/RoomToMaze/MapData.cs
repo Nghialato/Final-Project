@@ -37,9 +37,6 @@ namespace _Scripts.Algorithm
         public MapSize mapSize;
         
         public int numRoomsRequired;
-
-        [Range(0, 1)]
-        public float percentFillMap;
         
         public int distanceBetweenRoom;
     }

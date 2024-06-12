@@ -10,10 +10,20 @@ public abstract class AbstractDungeonGenerator : MonoBehaviour
     [SerializeField]
     protected Vector2Int startPosition = Vector2Int.zero;
 
+    [SerializeField] protected int timeCheck;
+
     public void GenerateDungeon()
     {
         tilemapVisualizer.Clear();
-        RunProceduralGeneration();
+        var watch = new System.Diagnostics.Stopwatch();
+            
+        watch.Start();
+        for (int i = 0; i < timeCheck; i++)
+        {
+            RunProceduralGeneration();
+        }
+        watch.Stop();
+        Debug.Log(watch.ElapsedMilliseconds);
     }
 
     protected abstract void RunProceduralGeneration();

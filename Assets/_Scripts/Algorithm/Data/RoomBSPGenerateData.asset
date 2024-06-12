@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c62757cd928a49a38b7c6a88b11be8bc, type: 3}
   m_Name: RoomBSPGenerateData
   m_EditorClassIdentifier: 
-  percentSplitHorizontal: 30
+  percentSplitHorizontal: 41

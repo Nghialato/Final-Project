@@ -7,5 +7,7 @@ namespace _Scripts.Algorithm.Data
     {
         [Range(0, 100)]
         public int percentChangeDirection;
+
+        public int stepMove;
     }
 }
