@@ -7,7 +7,11 @@ namespace _Scripts.GameCore.Entity.Enemy
     {
         public override void HealthUpdate()
         {
-            Debug.Log($"Enemy health {gameObject.name}");
+            if (healthData.health < 0)
+            {
+                Debug.Log($"Enemy death");
+                gameObject.SetActive(false);
+            }
         }
     }
 }

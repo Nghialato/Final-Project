@@ -15,9 +15,10 @@ namespace _Scripts.GameCore.MovementSys
             MovementSystemManagerEts.RegisterToArray(this);
         }
 
-        public void RemoveFromSystem()
+        public virtual void RemoveFromSystem()
         {
             MovementSystemManagerEts.RemoveFromArray(this);
+            gameObject.SetActive(false);
         }
 
         public void UpdateComponent()

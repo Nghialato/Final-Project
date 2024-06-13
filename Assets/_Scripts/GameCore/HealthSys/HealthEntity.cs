@@ -14,6 +14,7 @@ namespace _Scripts.GameCore.HealthSys
         public void RemoveFromSystem()
         {
             HealthSystemManagerEts.RemoveFromArray(this);
+            this.gameObject.SetActive(false);
         }
 
         public void UpdateComponent()

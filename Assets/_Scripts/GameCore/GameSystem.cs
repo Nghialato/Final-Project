@@ -18,6 +18,14 @@ namespace _Scripts.GameCore
             ComponentSystems.Remove(component);
         }
 
+        public void RemoveAllFromSystem()
+        {
+            for (var index = 0; index < ComponentSystems.Count; index++)
+            {
+                ComponentSystems[index].RemoveFromSystem();
+            }
+        }
+
         public void UpdateSystem()
         {
             for (int i = 0; i < ComponentSystems.Count; i++)

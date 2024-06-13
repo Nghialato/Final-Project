@@ -14,6 +14,12 @@ namespace _Scripts.GameCore.Logic
 
         public static Vector3 GetPosition() => _playerLogic.positionData.position;
 
+        public static void SetPosition(Vector3 position)
+        {
+            _playerLogic.positionData.position = position;
+            _playerLogic.positionData.dirty = true;
+        }
+
         public static PositionData GetPositionData() => _playerLogic.positionData;
 
         public static bool CheckInRange(Vector3 enemyPosition)

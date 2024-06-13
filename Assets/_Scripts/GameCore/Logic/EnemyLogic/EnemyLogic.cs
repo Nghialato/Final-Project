@@ -26,6 +26,15 @@ namespace _Scripts.GameCore.Logic
             positionData.dirty = true;
         }
 
+        public void Init(Vector2Int startPos, Vector2Int pathStart, Vector2Int pathEnd)
+        {
+            positionData.position = new Vector3(startPos.x, startPos.y);
+            positionData.dirty = true;
+            pathMove[0] = new Vector3(pathStart.x, pathStart.y);
+            pathMove[1] = new Vector3(pathEnd.x, pathEnd.y);
+            gameObject.SetActive(true);
+        }
+
         #region Health Logic
 
         public void DamageHealth(int dame)

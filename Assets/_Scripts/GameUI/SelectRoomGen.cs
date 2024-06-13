@@ -2,11 +2,12 @@ using System.Collections.Generic;
 using _Scripts.Algorithm;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class SelectRoomGen : MonoBehaviour
 {
     private TMP_Dropdown selectRoomGen; 
-    [SerializeField] private RoomToMazeAlgorithm roomToMazeAlgorithm;
+    [FormerlySerializedAs("roomToMazeAlgorithm")] [SerializeField] private DungeonGenerator dungeonGenerator;
     public List<GameObject> listData;
 
     private void Awake()
@@ -18,7 +19,7 @@ public class SelectRoomGen : MonoBehaviour
     {
         selectRoomGen.onValueChanged.AddListener(indexAlgorithm =>
         {
-            roomToMazeAlgorithm.SelectRoomGenerateAlgorithm(indexAlgorithm);
+            dungeonGenerator.SelectRoomGenerateAlgorithm(indexAlgorithm);
             for (int i = 0; i < listData.Count; i++)
             {
                 listData[i].SetActive(i == indexAlgorithm);

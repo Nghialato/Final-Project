@@ -1,11 +1,12 @@
 using _Scripts.Algorithm;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class SelectCorridorGen : MonoBehaviour
 {
     private TMP_Dropdown selectCorridorsGen; 
-    [SerializeField] private RoomToMazeAlgorithm roomToMazeAlgorithm;
+    [FormerlySerializedAs("roomToMazeAlgorithm")] [SerializeField] private DungeonGenerator dungeonGenerator;
     public GameObject mazeData;
 
     private void Awake()
@@ -17,7 +18,7 @@ public class SelectCorridorGen : MonoBehaviour
     {
         selectCorridorsGen.onValueChanged.AddListener(indexAlgorithm =>
         {
-            roomToMazeAlgorithm.SelectCorridorsGenerateAlgorithm(indexAlgorithm);
+            dungeonGenerator.SelectCorridorsGenerateAlgorithm(indexAlgorithm);
             mazeData.SetActive(indexAlgorithm == 1);
         });
     }

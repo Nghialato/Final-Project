@@ -83,7 +83,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   position: {x: 0, y: 0, z: 0}
   rotation: 0
-  speedMove: 3
+  speedMove: 5
   speedRotate: 0
   dirty: 0
 --- !u!114 &709230015410660167

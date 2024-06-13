@@ -1,5 +1,4 @@
 ﻿using _Scripts.GameCore.MovementSys;
-using UnityEngine;
 
 namespace _Scripts.GameCore.Entity
 {

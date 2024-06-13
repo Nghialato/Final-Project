@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace _Scripts.Algorithm
 {
@@ -60,6 +61,11 @@ namespace _Scripts.Algorithm
         public static Vector2Int GetCenter(this RoomData roomData)
         {
             return roomData.roomPos + new Vector2Int(roomData.width / 2, roomData.height / 2);
+        }
+
+        public static Vector2Int GetRandomPointInside(this RoomData roomData)
+        {
+            return roomData.roomPos + new Vector2Int(Random.Range(0, roomData.width - 1), Random.Range(0, roomData.height - 1));
         }
     }
 }

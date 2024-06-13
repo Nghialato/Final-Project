@@ -5,11 +5,13 @@ using _Scripts.Algorithm.ConnectRoomsAndCorridors;
 using _Scripts.Algorithm.GenerateCorridors;
 using _Scripts.Algorithm.GenerateRoom;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace _Scripts.Algorithm
 {
-    public class RoomToMazeAlgorithm : AbstractDungeonGenerator
+    public class DungeonGenerator : AbstractDungeonGenerator
     {
+        public static DungeonGenerator Instance;
         public MapData mapData;
 
         public List<GenerateRoomAbstract> RoomGenerates;
@@ -18,7 +20,6 @@ namespace _Scripts.Algorithm
         private GenerateRoomAbstract Room;
         private GeneratorCorridorsAbstract Corridors;
         public ConnectRoomsToCorridorsAbstract ConnectRoomsAndCorridors;
-        public RemoveDeadEnds RemoveDeadEnd; 
 
         private int[,] _logicMap;
 
@@ -26,6 +27,13 @@ namespace _Scripts.Algorithm
 
         [SerializeField] private List<RoomData> _listRooms = new();
         private Queue<Vector2Int> _deadEnds;
+        private int playerRoomID;
+
+        private void Awake()
+        {
+            if (Instance == null) Instance = this;
+            else Destroy(this.gameObject);
+        }   
 
         private void Start()
         {
@@ -257,7 +265,18 @@ namespace _Scripts.Algorithm
         {
             Corridors = CorridorsGenerates[indexAlgorithm];
         }
-        
+
+        public Vector2Int GetRandomPositionForPlayer()
+        {
+            var room = _listRooms[Random.Range(0, _listRooms.Count)];
+            playerRoomID = room.roomId;
+            return room.GetCenter();
+        }
+
+        public List<RoomData> GetListRoom() => _listRooms;
+
+        public bool IsPlayerRoom(int id) => playerRoomID == id;
+
     }
 
     internal enum MapType

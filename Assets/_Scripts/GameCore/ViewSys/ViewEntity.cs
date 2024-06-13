@@ -13,6 +13,7 @@ namespace _Scripts.GameCore.ViewSys
         public void RemoveFromSystem()
         {
             ViewSystemManagerEts.RemoveFromArray(this);
+            this.gameObject.SetActive(false);
         }
 
         public void UpdateComponent()

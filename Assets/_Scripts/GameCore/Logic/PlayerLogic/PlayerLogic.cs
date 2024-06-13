@@ -138,10 +138,11 @@ namespace _Scripts.GameCore.Logic
         
         private void Update()
         {
+            if (Input.anyKey == false) _directionMove = Vector3.zero;
             if (Input.GetKeyDown(KeyCode.A))
             {
                 _directionMove += Vector3.left;
-            }
+            }   
             
             if (Input.GetKeyDown(KeyCode.D))
             {
