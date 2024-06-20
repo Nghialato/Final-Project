@@ -2,7 +2,7 @@
 
 namespace _Scripts.GameCore.Entity.Enemy
 {
-    public class EnemyView : ViewEntity
+    public class EnemyView : ViewComponent
     {
         public override void ViewUpdate()
         {

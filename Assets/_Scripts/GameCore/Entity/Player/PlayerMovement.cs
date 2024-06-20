@@ -2,7 +2,7 @@
 
 namespace _Scripts.GameCore.Entity
 {
-    public class PlayerMovement: MovementEntity
+    public class PlayerMovement: MovementComponent
     {
         public override void Move()
         {

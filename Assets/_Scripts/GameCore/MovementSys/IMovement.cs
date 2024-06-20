@@ -1,6 +1,6 @@
 ﻿namespace _Scripts.GameCore.MovementSys
 {
-    public interface IMovement : IComponentSystem
+    public interface IMovement : IComponent
     {
         void Move();
     }

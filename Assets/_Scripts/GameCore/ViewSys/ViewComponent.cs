@@ -2,7 +2,7 @@
 
 namespace _Scripts.GameCore.ViewSys
 {
-    public class ViewEntity : MonoBehaviour, IView
+    public class ViewComponent : MonoBehaviour, IView
     {
         public ViewData viewData;
         public void RegisterToSystem()

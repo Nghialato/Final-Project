@@ -2,7 +2,7 @@
 
 namespace _Scripts.GameCore.Entity
 {
-    public class PlayerView : ViewEntity
+    public class PlayerView : ViewComponent
     {
         public override void ViewUpdate()
         {

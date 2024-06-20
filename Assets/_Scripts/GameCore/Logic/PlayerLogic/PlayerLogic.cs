@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using _Scripts.GameCore.Entity;
 using _Scripts.GameCore.HealthSys;
 using _Scripts.GameCore.MovementSys;
@@ -138,7 +137,11 @@ namespace _Scripts.GameCore.Logic
         
         private void Update()
         {
-            if (Input.anyKey == false) _directionMove = Vector3.zero;
+            if (Input.anyKey == false || isPauseMoving)
+            {
+                _directionMove = Vector3.zero;
+                return;
+            }
             if (Input.GetKeyDown(KeyCode.A))
             {
                 _directionMove += Vector3.left;

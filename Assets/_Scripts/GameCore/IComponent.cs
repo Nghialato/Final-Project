@@ -1,8 +1,6 @@
-﻿using _Scripts.GameCore.Entity;
-
-namespace _Scripts.GameCore
+﻿namespace _Scripts.GameCore
 {
-    public interface IComponentSystem
+    public interface IComponent
     {
         void RegisterToSystem();
         void RemoveFromSystem();

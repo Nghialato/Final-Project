@@ -1,9 +1,8 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace _Scripts.GameCore.HealthSys
 {
-    public abstract class HealthEntity : MonoBehaviour, IHealth
+    public abstract class HealthComponent : MonoBehaviour, IHealth
     {
         public HealthData healthData;
         public void RegisterToSystem()

@@ -13,7 +13,7 @@ public class FollowPlayer : BaseEntityManager
     private void Start()
     {
         startPos = transform.position;
-        startSize = GetComponent<Camera>().orthographicSize;
+        startSize = 75;
     }
 
     public void ReturnStartPoint()

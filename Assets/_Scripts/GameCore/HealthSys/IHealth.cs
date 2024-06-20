@@ -1,6 +1,6 @@
 ﻿namespace _Scripts.GameCore.HealthSys
 {
-    public interface IHealth : IComponentSystem
+    public interface IHealth : IComponent
     {
         void HealthUpdate();
     }

@@ -2,7 +2,7 @@
 
 namespace _Scripts.GameCore.Entity.Bullet
 {
-    public class BulletMovement : MovementEntity
+    public class BulletMovement : MovementComponent
     {
         public override void Move()
         {

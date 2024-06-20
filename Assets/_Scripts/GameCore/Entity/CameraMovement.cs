@@ -1,7 +1,7 @@
 using _Scripts.GameCore.MovementSys;
 using UnityEngine;
 
-public class CameraMovement : MovementEntity
+public class CameraMovement : MovementComponent
 {
     public override void Move()
     {

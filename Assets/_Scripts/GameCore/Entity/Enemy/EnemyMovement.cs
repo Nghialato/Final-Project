@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace _Scripts.GameCore.Entity.Enemy
 {
-    public class EnemyMovement : MovementEntity
+    public class EnemyMovement : MovementComponent
     {
         public override void Move()
         {

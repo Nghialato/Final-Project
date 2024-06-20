@@ -5,15 +5,15 @@ namespace _Scripts.GameCore
 {
     public abstract class GameSystem : MonoBehaviour
     {
-        private List<IComponentSystem> ComponentSystems = new(32);
+        private List<IComponent> ComponentSystems = new(32);
         public abstract void InitSystem();
 
-        public void RegisterToSystem(IComponentSystem component)
+        public void RegisterToSystem(IComponent component)
         {
             ComponentSystems.Add(component);
         }
 
-        public void RemoveFromSystem(IComponentSystem component)
+        public void RemoveFromSystem(IComponent component)
         {
             ComponentSystems.Remove(component);
         }

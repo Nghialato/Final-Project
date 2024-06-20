@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace _Scripts.GameCore.MovementSys
 {
-    public abstract class MovementEntity : MonoBehaviour, IMovement
+    public abstract class MovementComponent : MonoBehaviour, IMovement
     {
         public PositionData positionData;
         protected Transform _transform;

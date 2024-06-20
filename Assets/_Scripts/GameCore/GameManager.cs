@@ -1,26 +1,39 @@
 ﻿using _Scripts.Algorithm;
 using _Scripts.GameCore.Logic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace _Scripts.GameCore
 {
     public class GameManager : MonoBehaviour
     {
-        public GameSystem[] Systems;
+        public GameSystem[] systems;
+        
+        private void Awake()
+        {
+            systems = GetComponents<GameSystem>();
+            foreach (var system in systems)
+            {
+                system.InitSystem();
+            }
+        }
+        
+        private void Update()
+        {
+            if(!_playing) return;
+            foreach (var system in systems)
+            {
+                system.UpdateSystem();
+            }
+        }
+
+        #region Core Game
+
         public FollowPlayer follower;
         private bool _playing;
         public EnemyLogic enemyLogic;
         public PlayerLogic player;
-
-        private void Awake()
-        {
-            Systems = GetComponents<GameSystem>();
-            for (int i = 0; i < Systems.Length; i++)
-            {
-                Systems[i].InitSystem();
-            }
-        }
-
+        
         public void PlayGame()
         {
             Instantiate(player);
@@ -47,19 +60,12 @@ namespace _Scripts.GameCore
             _playing = false;
             follower.ReturnStartPoint();
             follower.enabled = false;
-            for (int i = 0; i < Systems.Length; i++)
+            for (int i = 0; i < systems.Length; i++)
             {
-                Systems[i].RemoveAllFromSystem();
+                systems[i].RemoveAllFromSystem();
             }
         }
 
-        private void Update()
-        {
-            if(!_playing) return;
-            for (int i = 0; i < Systems.Length; i++)
-            {
-                Systems[i].UpdateSystem();
-            }
-        }
+        #endregion
     }
 }

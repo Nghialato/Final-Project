@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace _Scripts.GameCore.Entity
 {
-    public class PlayerHealth : HealthEntity
+    public class PlayerHealth : HealthComponent
     {
         public override void HealthUpdate()
         {

@@ -1,5 +1,7 @@
 ﻿using Assets._Scripts.GameCore.Entity;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace _Scripts.GameCore.Entity
@@ -10,38 +12,38 @@ namespace _Scripts.GameCore.Entity
     public abstract class BaseEntityManager : MonoBehaviour
     {
         public EntityState state;
+        private List<IComponent> listComponent;
         protected virtual void OnEnable()
         {
-            var component = GetComponents<IComponentSystem>();
-            for (int i = 0; i < component.Length; i++)
+            listComponent = GetComponents<IComponent>().ToList();
+            foreach (var component in listComponent)
             {
-                component[i].RegisterToSystem();
+                component.RegisterToSystem();
             }
         }
 
         private void OnDisable()
         {
-            var component = GetComponents<IComponentSystem>();
-            for (int i = 0; i < component.Length; i++)
+            foreach (var component in listComponent)
             {
-                component[i].RemoveFromSystem();
+                component.RemoveFromSystem();
             }
         }
 
-        public void EnableComponent(IComponentSystem componentSystem)
+        public void EnableComponent(IComponent component)
         {
-            if (TryGetComponent(out componentSystem))
+            if (TryGetComponent(out component))
             {
-                componentSystem.RegisterToSystem();
-            } else Debug.LogError($"Entity does not contain {componentSystem}");
+                component.RegisterToSystem();
+            } else Debug.LogError($"Entity does not contain {component}");
         }
 
-        public void DisableComponent(IComponentSystem componentSystem)
+        public void DisableComponent(IComponent component)
         {
-            if (TryGetComponent(out componentSystem))
+            if (TryGetComponent(out component))
             {
-                componentSystem.RemoveFromSystem();
-            } else Debug.LogError($"Entity does not contain {componentSystem}");
+                component.RemoveFromSystem();
+            } else Debug.LogError($"Entity does not contain {component}");
         }
     }
 }
