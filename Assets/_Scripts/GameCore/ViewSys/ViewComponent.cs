@@ -2,21 +2,11 @@
 
 namespace _Scripts.GameCore.ViewSys
 {
-    public class ViewComponent : MonoBehaviour, IView
+    public class ViewComponent : BaseComponent<ViewData, ViewSystemManager>, IView
     {
         public ViewData viewData;
-        public void RegisterToSystem()
-        {
-            ViewSystemManagerEts.RegisterToArray(this);
-        }
 
-        public void RemoveFromSystem()
-        {
-            ViewSystemManagerEts.RemoveFromArray(this);
-            this.gameObject.SetActive(false);
-        }
-
-        public void UpdateComponent()
+        public override void UpdateComponent()
         {
             if(viewData.dirty == false) return;
             ViewUpdate();

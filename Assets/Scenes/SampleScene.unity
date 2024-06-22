@@ -2692,11 +2692,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2b5c844894347c79257654f7ff65e1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dirty: 0
   position: {x: 0, y: 0, z: 0}
   rotation: 0
   speedMove: 0
   speedRotate: 0
-  dirty: 0
 --- !u!114 &519420036
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2709,7 +2709,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3071d97a18ce864e9981613d1b78b9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  positionData: {fileID: 519420035}
 --- !u!1 &522149076
 GameObject:
   m_ObjectHideFlags: 0
@@ -29851,7 +29850,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 493732423f684245ba4530637079e6b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  systems: []
+  systems:
+  - {fileID: 1670945571}
+  - {fileID: 1670945574}
+  - {fileID: 1670945575}
   follower: {fileID: 519420034}
   enemyLogic: {fileID: 3758184646962970310, guid: 3bec39f54faf6c843b2742de9192c5a2, type: 3}
   player: {fileID: 1594719690352163941, guid: 45b98f0494828174caa7687d69228133, type: 3}

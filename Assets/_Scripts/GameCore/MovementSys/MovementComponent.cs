@@ -3,29 +3,22 @@ using UnityEngine;
 
 namespace _Scripts.GameCore.MovementSys
 {
-    public abstract class MovementComponent : MonoBehaviour, IMovement
+    public abstract class MovementComponent : BaseComponent<PositionData, MovementSystemManager>, IMovement
     {
-        public PositionData positionData;
         protected Transform _transform;
-        public abstract void Move();
+        public abstract void MoveUpdate();
 
-        public void RegisterToSystem()
+        public override void RegisterToSystem()
         {
+            base.RegisterToSystem();
             _transform = transform;
-            MovementSystemManagerEts.RegisterToArray(this);
         }
 
-        public virtual void RemoveFromSystem()
+        public override void UpdateComponent()
         {
-            MovementSystemManagerEts.RemoveFromArray(this);
-            gameObject.SetActive(false);
-        }
-
-        public void UpdateComponent()
-        {
-            if (positionData.dirty == false) return;
-            Move();
-            positionData.dirty = false;
+            if (ComponentData.dirty == false) return;
+            MoveUpdate();
+            ComponentData.dirty = false;
         }
 
         private void OnDisable()

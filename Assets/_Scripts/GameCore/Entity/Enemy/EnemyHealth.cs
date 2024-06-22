@@ -7,7 +7,7 @@ namespace _Scripts.GameCore.Entity.Enemy
     {
         public override void HealthUpdate()
         {
-            if (healthData.health < 0)
+            if (ComponentData.health < 0)
             {
                 Debug.Log($"Enemy death");
                 gameObject.SetActive(false);

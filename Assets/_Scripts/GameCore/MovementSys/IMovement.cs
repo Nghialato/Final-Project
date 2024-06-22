@@ -2,6 +2,6 @@
 {
     public interface IMovement : IComponent
     {
-        void Move();
+        void MoveUpdate();
     }
 }

@@ -3,13 +3,8 @@ using UnityEngine;
 
 public class CameraMovement : MovementComponent
 {
-    public override void Move()
+    public override void MoveUpdate()
     {
-        _transform.position = positionData.position + new Vector3(0, 0, -10);
-    }
-
-    public override void RemoveFromSystem()
-    {
-        
+        _transform.position = ComponentData.position + new Vector3(0, 0, -10);
     }
 }

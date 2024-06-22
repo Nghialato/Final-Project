@@ -5,7 +5,7 @@ namespace _Scripts.GameCore
 {
     public abstract class GameSystem : MonoBehaviour
     {
-        private List<IComponent> ComponentSystems = new(32);
+        public List<IComponent> ComponentSystems = new(32);
         public abstract void InitSystem();
 
         public void RegisterToSystem(IComponent component)
@@ -22,7 +22,7 @@ namespace _Scripts.GameCore
         {
             for (var index = 0; index < ComponentSystems.Count; index++)
             {
-                ComponentSystems[index].RemoveFromSystem();
+                RemoveFromSystem(ComponentSystems[index]);
             }
         }
 

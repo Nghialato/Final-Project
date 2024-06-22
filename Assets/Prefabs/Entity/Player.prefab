@@ -68,7 +68,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 347f527a878b436a81e6341c2fb09a5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  healthData: {fileID: 7275085489630603523}
+  componentData: {fileID: 7275085489630603523}
 --- !u!114 &7675738519779148723
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -81,7 +81,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11c07cf92c754d45ac80e8e1592d2d6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  positionData: {fileID: 4418992631265678807}
+  componentData: {fileID: 4418992631265678807}
 --- !u!114 &4418992631265678807
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -94,11 +94,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2b5c844894347c79257654f7ff65e1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dirty: 1
   position: {x: 5, y: 5, z: 0}
   rotation: 0
   speedMove: 5
   speedRotate: 10
-  dirty: 1
 --- !u!114 &7275085489630603523
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -111,8 +111,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 806ce313b20640ce9777bb9822d906d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 9
   dirty: 0
+  health: 9
 --- !u!114 &1594719690352163941
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -204,8 +204,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d74c3a374e943be8dcf1a0f27816257, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  viewRange: 5
   dirty: 0
+  viewRange: 5
 --- !u!114 &613527293232572419
 MonoBehaviour:
   m_ObjectHideFlags: 0

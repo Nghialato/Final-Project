@@ -1,10 +1,7 @@
-﻿using UnityEngine;
-
-namespace _Scripts.GameCore.ViewSys
+﻿namespace _Scripts.GameCore.ViewSys
 {
-    public class ViewData : MonoBehaviour
+    public class ViewData : ComponentData
     {
         public float viewRange;
-        public bool dirty;
     }
 }

@@ -1,7 +1,6 @@
 ﻿using _Scripts.Algorithm;
 using _Scripts.GameCore.Logic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace _Scripts.GameCore
 {

@@ -5,12 +5,12 @@ namespace _Scripts.GameCore.Entity.Enemy
 {
     public class EnemyMovement : MovementComponent
     {
-        public override void Move()
+        public override void MoveUpdate()
         {
-            _transform.position = positionData.position;
-            var angle = _transform.eulerAngles;
-            angle.z = positionData.rotation;
-            _transform.eulerAngles = angle;
+            transform.position = ComponentData.position;
+            var angle = transform.eulerAngles;
+            angle.z = ComponentData.rotation;
+            transform.eulerAngles = angle;
         }
     }
 }

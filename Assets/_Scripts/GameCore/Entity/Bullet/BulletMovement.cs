@@ -4,11 +4,11 @@ namespace _Scripts.GameCore.Entity.Bullet
 {
     public class BulletMovement : MovementComponent
     {
-        public override void Move()
+        public override void MoveUpdate()
         {
-            _transform.position = positionData.position;
+            _transform.position = ComponentData.position;
             var angle = _transform.eulerAngles;
-            angle.z = positionData.rotation;
+            angle.z = ComponentData.rotation;
             _transform.eulerAngles = angle;
         }
     }
