@@ -7,25 +7,29 @@ namespace _Scripts.GameCore
         protected T ComponentData;
         private TK _gameSystem;
 
-        private void Awake()
+        public void Init()
         {
             ComponentData = GetComponent<T>();
-            _gameSystem = FindObjectOfType<TK>();
+            _gameSystem = (TK)GameManager.listSystem[typeof(TK)];
         }
 
         public virtual void RegisterToSystem()
         {
-            if (_gameSystem == null) _gameSystem = FindObjectOfType<TK>();
             _gameSystem.RegisterToSystem(this);
         }
 
         public virtual void RemoveFromSystem()
         {
-            _gameSystem.RegisterToSystem(this);
+                _gameSystem.RemoveFromSystem(this);
         }
 
         public virtual void UpdateComponent()
         {
+        }
+
+        private void OnDisable()
+        {
+            RemoveFromSystem();
         }
     }
 }

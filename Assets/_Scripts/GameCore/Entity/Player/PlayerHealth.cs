@@ -5,7 +5,7 @@ namespace _Scripts.GameCore.Entity
 {
     public class PlayerHealth : HealthComponent
     {
-        public override void HealthUpdate()
+        protected override void HealthUpdate()
         {
             Debug.Log($"Player Health {gameObject.name}");
         }

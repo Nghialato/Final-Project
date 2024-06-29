@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using _Scripts.GameCore.Entity;
 using _Scripts.GameCore.HealthSys;
 using _Scripts.GameCore.MovementSys;
@@ -28,6 +29,7 @@ namespace _Scripts.GameCore.Logic
         #region Move Logic
 
         private Vector3 _directionMove;
+        private Vector3 _directionNotMove;
 
         private void ModifyPosition()
         {
@@ -36,7 +38,7 @@ namespace _Scripts.GameCore.Logic
                 return;
             }
             positionData.dirty = true;
-            positionData.position += _directionMove.normalized * (positionData.speedMove * Time.deltaTime);
+            positionData.position += _directionMove.normalized * (positionData.speedMove * Time.fixedDeltaTime);
             var targetRotation = 0f;
             if (isTargeting)
             {
@@ -78,6 +80,7 @@ namespace _Scripts.GameCore.Logic
 
             if (other.gameObject.TryGetComponent(out IWall wall))
             {
+                _directionNotMove = _directionMove;
                 _directionMove = Vector3.zero;
                 isPauseMoving = true;
             }
@@ -88,6 +91,7 @@ namespace _Scripts.GameCore.Logic
             if (other.gameObject.TryGetComponent(out IWall wall))
             {
                 isPauseMoving = false;
+                _directionNotMove = Vector3.zero;
             }
         }
 
@@ -137,29 +141,33 @@ namespace _Scripts.GameCore.Logic
         
         private void Update()
         {
-            if (Input.anyKey == false || isPauseMoving)
+            if (Input.anyKey == false)
             {
                 _directionMove = Vector3.zero;
-                return;
             }
-            if (Input.GetKeyDown(KeyCode.A))
-            {
-                _directionMove += Vector3.left;
-            }   
             
             if (Input.GetKeyDown(KeyCode.D))
             {
-                _directionMove += Vector3.right;
+                if(_directionNotMove.x != 1)
+                    _directionMove += Vector3.right;
             }
             
             if (Input.GetKeyDown(KeyCode.W))
             {
-                _directionMove += Vector3.up;
+                if(_directionNotMove.y != 1)
+                    _directionMove += Vector3.up;
             }
             
             if (Input.GetKeyDown(KeyCode.S))
             {
-                _directionMove += Vector3.down;
+                if(_directionNotMove.y != -1)
+                    _directionMove += Vector3.down;
+            }
+            
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                if(_directionNotMove.x != -1)
+                    _directionMove += Vector3.left;
             }
             
             if (Input.GetKeyUp(KeyCode.A) && isPauseMoving == false)
@@ -187,7 +195,7 @@ namespace _Scripts.GameCore.Logic
             {
                 isPauseMoving = false;
             }
-
+            
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 Attack();

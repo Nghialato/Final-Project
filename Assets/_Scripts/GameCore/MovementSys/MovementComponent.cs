@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace _Scripts.GameCore.MovementSys
 {
-    public abstract class MovementComponent : BaseComponent<PositionData, MovementSystemManager>, IMovement
+    public abstract class MovementComponent : BaseComponent<PositionData, MovementSystemManager>
     {
         protected Transform _transform;
         public abstract void MoveUpdate();
@@ -19,11 +19,6 @@ namespace _Scripts.GameCore.MovementSys
             if (ComponentData.dirty == false) return;
             MoveUpdate();
             ComponentData.dirty = false;
-        }
-
-        private void OnDisable()
-        {
-            RemoveFromSystem();
         }
     }
 }

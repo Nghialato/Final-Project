@@ -2,7 +2,7 @@
 
 namespace _Scripts.GameCore.ViewSys
 {
-    public class ViewComponent : BaseComponent<ViewData, ViewSystemManager>, IView
+    public abstract class ViewComponent : BaseComponent<ViewData, ViewSystemManager>
     {
         public ViewData viewData;
 
@@ -13,14 +13,6 @@ namespace _Scripts.GameCore.ViewSys
             viewData.dirty = false;
         }
 
-        public virtual void ViewUpdate()
-        {
-            
-        }
-        
-        private void OnDisable()
-        {
-            RemoveFromSystem();
-        }
+        protected abstract void ViewUpdate();
     }
 }

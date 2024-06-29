@@ -18,6 +18,7 @@ namespace _Scripts.GameCore.Entity
             listComponent = GetComponents<IComponent>().ToList();
             foreach (var component in listComponent)
             {
+                component.Init();
                 component.RegisterToSystem();
             }
         }

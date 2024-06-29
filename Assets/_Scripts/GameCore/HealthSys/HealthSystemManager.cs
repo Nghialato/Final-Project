@@ -4,7 +4,7 @@
     {
         public override void InitSystem()
         {
-            this.Init();
+            
         }
     }
 }

@@ -68,7 +68,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 347f527a878b436a81e6341c2fb09a5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentData: {fileID: 7275085489630603523}
 --- !u!114 &7675738519779148723
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -81,7 +80,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11c07cf92c754d45ac80e8e1592d2d6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  componentData: {fileID: 4418992631265678807}
 --- !u!114 &4418992631265678807
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -162,9 +160,9 @@ CircleCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.11090064}
+  m_Offset: {x: 0, y: -0.13588524}
   serializedVersion: 2
-  m_Radius: 0.38909936
+  m_Radius: 0.31414557
 --- !u!50 &3525422437731218091
 Rigidbody2D:
   serializedVersion: 4

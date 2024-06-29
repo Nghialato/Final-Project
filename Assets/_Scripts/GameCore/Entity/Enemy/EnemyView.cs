@@ -4,9 +4,8 @@ namespace _Scripts.GameCore.Entity.Enemy
 {
     public class EnemyView : ViewComponent
     {
-        public override void ViewUpdate()
+        protected override void ViewUpdate()
         {
-            base.ViewUpdate();
         }
     }
 }
