@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using _Scripts.GameCore.Entity;
-using _Scripts.GameCore.HealthSys;
-using _Scripts.GameCore.MovementSys;
-using _Scripts.GameCore.ViewSys;
-using Assets._Scripts.GameCore.AttackSys;
+using _Scripts.GameData;
+using _Scripts.GameLogic.AttackSys;
 using UnityEngine;
 
-namespace _Scripts.GameCore.Logic
+namespace _Scripts.GameLogic
 {
     public class PlayerLogic : MonoBehaviour
     {

@@ -1,11 +1,8 @@
 ﻿using _Scripts.GameCore.Entity.Bullet;
-using _Scripts.GameCore.HealthSys;
-using _Scripts.GameCore.MovementSys;
-using _Scripts.GameCore.ViewSys;
-using Assets._Scripts.GameCore.AttackSys;
+using _Scripts.GameData;
 using UnityEngine;
 
-namespace _Scripts.GameCore.Logic
+namespace _Scripts.GameLogic
 {
     public class EnemyLogic : MonoBehaviour
     {

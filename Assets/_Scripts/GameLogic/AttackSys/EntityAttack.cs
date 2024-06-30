@@ -1,8 +1,7 @@
-﻿using _Scripts.GameCore.Logic;
-using _Scripts.GameCore.MovementSys;
+﻿using _Scripts.GameData;
 using UnityEngine;
 
-namespace Assets._Scripts.GameCore.AttackSys
+namespace _Scripts.GameLogic
 {
     public abstract class EntityAttack : MonoBehaviour
     {

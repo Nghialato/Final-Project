@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using _Scripts.Algorithm;
-using _Scripts.GameCore.Logic;
+using _Scripts.GameLogic;
 using _Scripts.GameCore.MovementSys;
 using Unity.VisualScripting;
 using UnityEngine;

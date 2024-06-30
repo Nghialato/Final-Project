@@ -1,10 +1,9 @@
 using System.Threading.Tasks;
 using _Scripts.GameCore.Entity.Bullet;
-using _Scripts.GameCore.MovementSys;
-using Assets._Scripts.GameCore.AttackSys;
+using _Scripts.GameData;
 using UnityEngine;
 
-namespace _Scripts.GameCore.AttackSys.PlayerAttack
+namespace _Scripts.GameLogic
 {
     public class PlayerFarAttack : EntityAttack
     {

@@ -1,4 +1,5 @@
 ﻿using System;
+using _Scripts.GameData;
 using UnityEngine;
 
 namespace _Scripts.GameCore.MovementSys

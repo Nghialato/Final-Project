@@ -1,7 +1,6 @@
-using System;
 using _Scripts.GameCore.Entity;
-using _Scripts.GameCore.Logic;
-using _Scripts.GameCore.MovementSys;
+using _Scripts.GameLogic;
+using _Scripts.GameData;
 using UnityEngine;
 
 public class FollowPlayer : BaseEntityManager

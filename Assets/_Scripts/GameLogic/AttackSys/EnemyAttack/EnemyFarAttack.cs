@@ -1,10 +1,9 @@
-﻿using Assets._Scripts.GameCore.AttackSys;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using _Scripts.GameCore.Entity.Bullet;
-using _Scripts.GameCore.MovementSys;
+using _Scripts.GameData;
 using UnityEngine;
 
-namespace _Scripts.GameCore.AttackSys.EnemyAttack
+namespace _Scripts.GameLogic
 {
     public class EnemyFarAttack : EntityAttack
     {

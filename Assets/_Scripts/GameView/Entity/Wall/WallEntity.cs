@@ -1,4 +1,4 @@
-﻿using _Scripts.GameCore.Logic;
+﻿using _Scripts.GameLogic;
 using UnityEngine;
 
 namespace _Scripts.GameCore.Entity

@@ -1,4 +1,4 @@
-﻿namespace _Scripts.GameCore.ViewSys
+﻿namespace _Scripts.GameData
 {
     public class ViewData : ComponentData
     {

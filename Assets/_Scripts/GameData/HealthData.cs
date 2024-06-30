@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-namespace _Scripts.GameCore.HealthSys
+﻿namespace _Scripts.GameData
 {
     public class HealthData : ComponentData
     {

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace _Scripts.GameCore
+namespace _Scripts.GameData
 {
     public class ComponentData : MonoBehaviour
     {

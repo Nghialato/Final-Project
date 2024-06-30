@@ -1,7 +1,7 @@
-﻿using _Scripts.GameCore.MovementSys;
+﻿using _Scripts.GameData;
 using UnityEngine;
 
-namespace _Scripts.GameCore.Logic
+namespace _Scripts.GameLogic
 {
     public static class PlayerLogicEts
     {

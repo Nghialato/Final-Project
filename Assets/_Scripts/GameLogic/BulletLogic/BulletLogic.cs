@@ -1,11 +1,8 @@
-﻿using System;
-using _Scripts.GameCore.Entity.Bullet;
-using _Scripts.GameCore.MovementSys;
-using _Scripts.GameCore.ViewSys;
+﻿using _Scripts.GameCore.Entity.Bullet;
+using _Scripts.GameData;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace _Scripts.GameCore.Logic
+namespace _Scripts.GameLogic
 {
     public class BulletLogic : MonoBehaviour
     {

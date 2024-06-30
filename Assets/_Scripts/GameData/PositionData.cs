@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace _Scripts.GameCore.MovementSys
+namespace _Scripts.GameData
 {
     public class PositionData : ComponentData
     {
