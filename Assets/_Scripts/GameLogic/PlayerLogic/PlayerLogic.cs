@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using _Scripts.GameCore.Entity;
 using _Scripts.GameData;
-using _Scripts.GameLogic.AttackSys;
 using UnityEngine;
 
 namespace _Scripts.GameLogic
